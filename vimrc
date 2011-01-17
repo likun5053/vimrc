@@ -22,6 +22,9 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Pathogen
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use pathogen to easily modify the runtime path to include all plugins under
 " the ~/.vim/bundle directory
 filetype off                    " force reloading *after* pathogen loaded
@@ -29,10 +32,12 @@ call pathogen#helptags()
 call pathogen#runtime_append_all_bundles()
 filetype plugin indent on       " enable detection, plugins and indenting in one step
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Editing behaviour 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Change the mapleader from \ to ,
 let mapleader=","
 
-" Editing behaviour {{{
 set showmode                    " always show what mode we're currently editing in
 set nowrap                      " don't wrap lines
 set tabstop=4                   " a tab is four spaces
@@ -76,10 +81,10 @@ vnoremap / /\v
 " Speed up scrolling of the viewport slightly
 nnoremap <C-e> 2<C-e>
 nnoremap <C-y> 2<C-y>
-" }}}
 
-" Folding rules {{{
-set foldenable                  " enable folding
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Folding rules 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set foldcolumn=2                " add a fold column
 set foldmethod=marker           " detect triple-{ style fold markers
 set foldlevelstart=0            " start out with everything folded
@@ -101,9 +106,10 @@ function! MyFoldText()
     return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
 endfunction
 set foldtext=MyFoldText()
-" }}}
 
-" Editor layout {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Editor layout 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set termencoding=utf-8
 set encoding=utf-8
 set lazyredraw                  " don't update the display while executing macros
@@ -112,7 +118,9 @@ set laststatus=2                " tell VIM to always put a status line in, even
 set cmdheight=2                 " use a status bar that is 2 rows high
 " }}}
 
-" Vim behaviour {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Vim behaviour 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set hidden                      " hide buffers instead of closing them this
                                 "    means that the current buffer can be put
                                 "    to background without being written; and
@@ -124,12 +132,12 @@ set history=1000                " remember more commands and search history
 set undolevels=1000             " use many muchos levels of undo
 if v:version >= 730
     set undofile                " keep a persistent backup file
-    set undodir=~/.vim/.undo,~/tmp,/tmp
+    set undodir=~/vimrc/vim/undo,~/tmp,/tmp
 endif
 set nobackup                    " do not keep backup files, it's 70's style cluttering
 set noswapfile                  " do not write annoying intermediate swap files,
                                 "    who did ever restore from swap files anyway?
-set directory=~/.vim/.tmp,~/tmp,/tmp
+set directory=~/vimrc/vim/tmp,~/tmp,/tmp
                                 " store swap files in one of these directories
                                 "    (in case swapfile is ever turned on)
 set viminfo='20,\"80            " read/write a .viminfo file, don't store more
@@ -170,13 +178,14 @@ endif
 if &t_Co > 2 || has("gui_running")
    syntax on                    " switch syntax highlighting on, when the terminal has colors
 endif
-" }}}
 
-" Shortcut mappings {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Shortcut mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Since I never use the ; key anyway, this is a real optimization for almost
 " all Vim commands, since we don't have to press that annoying Shift key that
 " slows the commands down
-nnoremap ; :
+"nnoremap ; :
 
 " Avoid accidental hits of <F1> while aiming for <Esc>
 map! <F1> <Esc>
@@ -210,12 +219,262 @@ nnoremap ` '
 nnoremap j gj
 nnoremap k gk
 
+" Fast saving
+nmap <leader>w :w!<cr>
+
+if MySys() == "windows"
+    " Fast editing of the .vimrc
+    map <leader>e :e! ~/vimrc/vimrc<cr>
+
+    " When vimrc is edited, reload it
+    autocmd! bufwritepost vimrc source ~/vimrc/vimrc
+else
+    " Fast editing of the .vimrc
+    map <leader>e :e! ~/.vim/vimrc<cr>
+
+    " When vimrc is edited, reload it
+    autocmd! bufwritepost vimrc source ~/vimrc/vimrc
+endif
 " Easy window navigation
+
+""""""""""""""""""""""""""""""
+" => Visual mode related
+""""""""""""""""""""""""""""""
+" NOTICE: Really useful!
+
+"  In visual mode when you press * or # to search for the current selection
+vnoremap <silent> * :call VisualSelection('f')<CR>
+vnoremap <silent> # :call VisualSelection('b')<CR>
+
+" When you press gv you vimgrep after the selected text
+vnoremap <silent> gv :call VisualSelection('gv')<CR>
+
+" Some useful keys for vimgrep
+map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
+map <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>
+
+" When you press <leader>r you can search and replace the selected text
+vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
+
+"
+" From an idea by Michael Naumann
+" 
+function! CmdLine(str)
+    exe "menu Foo.Bar :" . a:str
+    emenu Foo.Bar
+    unmenu Foo
+endfunction 
+
+function! VisualSelection(direction) range
+    let l:saved_reg = @"
+    execute "normal! vgvy"
+
+    let l:pattern = escape(@", '\\/.*$^~[]')
+    let l:pattern = substitute(l:pattern, "\n$", "", "")
+
+    if a:direction == 'b'
+        execute "normal ?" . l:pattern . "^M"
+    elseif a:direction == 'gv'
+        call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
+    elseif a:direction == 'replace'
+        call CmdLine("%s" . '/'. l:pattern . '/')
+    elseif a:direction == 'f'
+        execute "normal /" . l:pattern . "^M"
+    endif
+
+    let @/ = l:pattern
+    let @" = l:saved_reg
+endfunction
+
+""""""""""""""""""""""""""""""
+" => Command mode related
+""""""""""""""""""""""""""""""
+" Smart mappings on the command line
+cno $h e ~/
+cno $d c <C-\>eCurrentFileDir("e")<cr>
+cno $j e ./
+cno $c e <C-\>eCurrentFileDir("e")<cr>
+
+" $q is super useful when browsing on the command line
+cno $q <C-\>eDeleteTillSlash()<cr>
+
+" Bash like keys for the command line
+cnoremap <C-A>		<Home>
+cnoremap <C-E>		<End>
+cnoremap <C-K>		<C-U>
+
+cnoremap <C-P> <Up>
+cnoremap <C-N> <Down>
+
 map <C-h> <C-w>h
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
-nnoremap <leader>w <C-w>v<C-w>l
+
+func! Cwd()
+  let cwd = getcwd()
+  return "e " . cwd 
+endfunc
+
+func! DeleteTillSlash()
+  let g:cmd = getcmdline()
+  if MySys() == "linux" || MySys() == "mac"
+    let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*", "\\1", "")
+  else
+    let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\]\\).*", "\\1", "")
+  endif
+  if g:cmd == g:cmd_edited
+    if MySys() == "linux" || MySys() == "mac"
+      let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*/", "\\1", "")
+    else
+      let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\\]\\).*\[\\\\\]", "\\1", "")
+    endif
+  endif   
+  return g:cmd_edited
+endfunc
+
+func! CurrentFileDir(cmd)
+  return a:cmd . " " . expand("%:p:h") . "/"
+endfunc
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around, tabs and buffers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Map space to / (search) and c-space to ? (backgwards search)
+map <space> /
+map <c-space> ?
+map <silent> <leader><cr> :noh<cr>
+
+" Smart way to move btw. windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Close the current buffer
+map <leader>bd :Bclose<cr>
+
+" Close all the buffers
+map <leader>ba :1,300 bd!<cr>
+
+" Use the arrows to something usefull
+map <right> :bn<cr>
+map <left> :bp<cr>
+
+" Tab configuration
+map <leader>tn :tabnew! %<cr>
+map <leader>te :tabedit 
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove 
+
+" When pressing <leader>cd switch to the directory of the open buffer
+map <leader>cd :cd %:p:h<cr>
+
+
+command! Bclose call <SID>BufcloseCloseIt()
+function! <SID>BufcloseCloseIt()
+   let l:currentBufNum = bufnr("%")
+   let l:alternateBufNum = bufnr("#")
+
+   if buflisted(l:alternateBufNum)
+     buffer #
+   else
+     bnext
+   endif
+
+   if bufnr("%") == l:currentBufNum
+     new
+   endif
+
+   if buflisted(l:currentBufNum)
+     execute("bdelete! ".l:currentBufNum)
+   endif
+endfunction
+
+" Specify the behavior when switching between buffers 
+try
+  set switchbuf=usetab
+  set stal=2
+catch
+endtry
+
+""""""""""""""""""""""""""""""
+" => Statusline
+""""""""""""""""""""""""""""""
+" Always hide the statusline
+set laststatus=2
+
+" Format the statusline
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
+
+
+function! CurDir()
+    let curdir = substitute(getcwd(), '/Users/amir/', "~/", "g")
+    return curdir
+endfunction
+
+function! HasPaste()
+    if &paste
+        return 'PASTE MODE  '
+    else
+        return ''
+    endif
+endfunction
+
+
+""""""""""""""""""""""""""""""
+" => Parenthesis/bracket expanding
+""""""""""""""""""""""""""""""
+vnoremap $1 <esc>`>a)<esc>`<i(<esc>
+vnoremap $2 <esc>`>a]<esc>`<i[<esc>
+vnoremap $3 <esc>`>a}<esc>`<i{<esc>
+vnoremap $$ <esc>`>a"<esc>`<i"<esc>
+vnoremap $q <esc>`>a'<esc>`<i'<esc>
+vnoremap $e <esc>`>a"<esc>`<i"<esc>
+
+" Map auto complete of (, ", ', [
+inoremap $1 ()<esc>i
+inoremap $2 []<esc>i
+inoremap $3 {}<esc>i
+inoremap $4 {<esc>o}<esc>O
+inoremap $q ''<esc>i
+inoremap $e ""<esc>i
+inoremap $t <><esc>i
+
+
+""""""""""""""""""""""""""""""
+" => General Abbrevs
+""""""""""""""""""""""""""""""
+iab xdate <c-r>=strftime("%d/%m/%y %H:%M:%S")<cr>
+
+""""""""""""""""""""""""""""""
+" => Editing mapping
+""""""""""""""""""""""""""""""
+map 0 ^
+
+"Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+if MySys() == "mac"
+  nmap <D-j> <M-j>
+  nmap <D-k> <M-k>
+  vmap <D-j> <M-j>
+  vmap <D-k> <M-k>
+endif
+
+"Delete trailing white space, useful for Python ;)
+func! DeleteTrailingWS()
+  exe "normal mz"
+  %s/\s\+$//ge
+  exe "normal `z"
+endfunc
+autocmd BufWrite *.py :call DeleteTrailingWS()
+
+set guitablabel=%t
+
 
 " Complete whole filenames/lines with a quicker shortcut key in insert mode
 imap <C-f> <C-x><C-f>
@@ -239,9 +498,6 @@ nmap <leader>P "+P
 let g:yankring_history_dir = '$HOME/.vim/.tmp'
 nmap <leader>r :YRShow<CR>
 
-" Edit the vimrc file
-nmap <silent> <leader>ev :e $MYVIMRC<CR>
-nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
 " Clears the search register
 nmap <silent> <leader>/ :nohlsearch<CR>
@@ -290,7 +546,21 @@ nnoremap <leader>v V`]
 nnoremap <F5> :GundoToggle<CR>
 " }}}
 
-" NERDTree settings {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Spell checking
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<cr>
+
+"Shortcuts using <leader>
+map <leader>sn ]s
+map <leader>sp [s
+map <leader>sa zg
+map <leader>s? z=
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => NERDTree settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Put focus to the NERD Tree with F3 (tricked by quickly closing it and
 " immediately showing it again, since there is no :NERDTreeFocus command)
 nmap <leader>n :NERDTreeClose<CR>:NERDTreeToggle<CR>
@@ -321,13 +591,15 @@ let NERDTreeMouseMode=2
 let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.py\$class$', '\.obj$',
             \ '\.o$', '\.so$', '\.egg$', '^\.git$' ]
 
-" }}}
 
-" Managing buffers with LustyJuggler {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Managing buffers with LustyJuggler 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map ,b :LustyJuggler<CR>
-" }}}
 
-" TagList settings {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => TagList settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <leader>l :TlistClose<CR>:TlistToggle<CR>
 nmap <leader>L :TlistClose<CR>
 
@@ -357,17 +629,18 @@ let Tlist_Display_Tag_Scope=0
 " show TagList window on the right
 let Tlist_Use_Right_Window=1
 
-" }}}
-
-" Conflict markers {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Conflict markers 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " highlight conflict markers
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 
 " shortcut to jump to next conflict marker
 nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
-" }}}
 
-" Filetype specific handling {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Filetype specific handling
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " only do this part when compiled with support for autocommands
 if has("autocmd")
     augroup invisible_chars "{{{
@@ -502,10 +775,11 @@ if has("autocmd")
         autocmd filetype textile highlight link frontmatter Comment
     augroup end "}}}
 endif
-" }}}
 
-" Skeleton processing {{{
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Skeleton processing
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("autocmd")
 
     if !exists('*LoadTemplate')
@@ -523,17 +797,19 @@ if has("autocmd")
 
 endif " has("autocmd")
 
-" }}}
-
-" Restore cursor position upon reopening files {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Restore cursor position upon reopening files 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
-" }}}
 
-" Common abbreviations / misspellings {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Common abbreviations / misspellings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 source ~/.vim/autocorrect.vim
-" }}}
 
-" Extra vi-compatibility {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Extra vi-compatibility 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " set extra vi-compatible options
 set cpoptions+=$     " when changing a line, don't redisplay, but put a '$' at
                      " the end during the change
@@ -541,11 +817,11 @@ set formatoptions-=o " don't start new lines w/ comment leader on pressing 'o'
 au filetype vim set formatoptions-=o
                      " somehow, during vim filetype detection, this gets set
                      " for vim files, so explicitly unset it again
-" }}}
 
-" Extra user or machine specific settings {{{
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Extra user or machine specific settings 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 source ~/.vim/user.vim
-" }}}
 
 " Creating underline/overline headings for markup languages
 " Inspired by http://sphinx.pocoo.org/rest.html#sections
