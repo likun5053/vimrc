@@ -26,7 +26,7 @@ set nocompatible
 " => Pathogen
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use pathogen to easily modify the runtime path to include all plugins under
-" the ~/.vim/bundle directory
+" the ~/vimrc/vim/bundle directory
 filetype off                    " force reloading *after* pathogen loaded
 call pathogen#helptags()
 call pathogen#runtime_append_all_bundles()
@@ -168,11 +168,11 @@ function! QFixToggle(forced)
     let g:qfix_win = bufnr("$")
   endif
 endfunction
-" }}}
 
-" Highlighting {{{
-if &t_Co >= 256 || has("gui_running")
-   colorscheme molokai
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =>highlight
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 endif
 
 if &t_Co > 2 || has("gui_running")
@@ -230,7 +230,7 @@ if MySys() == "windows"
     autocmd! bufwritepost vimrc source ~/vimrc/vimrc
 else
     " Fast editing of the .vimrc
-    map <leader>e :e! ~/.vim/vimrc<cr>
+    map <leader>e :e! ~/vimrc/vim/vimrc<cr>
 
     " When vimrc is edited, reload it
     autocmd! bufwritepost vimrc source ~/vimrc/vimrc
@@ -458,6 +458,9 @@ nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
+func! Mysys()
+    return 'linux'
+
 if MySys() == "mac"
   nmap <D-j> <M-j>
   nmap <D-k> <M-k>
@@ -495,7 +498,7 @@ nmap <leader>p "+p
 nmap <leader>P "+P
 
 " YankRing stuff
-let g:yankring_history_dir = '$HOME/.vim/.tmp'
+let g:yankring_history_dir = '~/vimrc/vim/.tmp'
 nmap <leader>r :YRShow<CR>
 
 
@@ -568,7 +571,7 @@ nmap <leader>m :NERDTreeClose<CR>:NERDTreeFind<CR>
 nmap <leader>N :NERDTreeClose<CR>
 
 " Store the bookmarks file
-let NERDTreeBookmarksFile=expand("$HOME/.vim/NERDTreeBookmarks")
+let NERDTreeBookmarksFile=expand("~/vimrc/vim/NERDTreeBookmarks")
 
 " Show the bookmarks table on startup
 let NERDTreeShowBookmarks=1
@@ -686,7 +689,7 @@ if has("autocmd")
         " Auto-closing of HTML/XML tags
         let g:closetag_default_xml=1
         autocmd filetype html,htmldjango let b:closetag_html_style=1
-        autocmd filetype html,xhtml,xml source ~/.vim/scripts/closetag.vim
+        autocmd filetype html,xhtml,xml source ~/vimrc/vim/scripts/closetag.vim
 
         " Enable Sparkup for lightning-fast HTML editing
         let g:sparkupExecuteMapping = '<leader>e'
@@ -786,9 +789,9 @@ if has("autocmd")
     function LoadTemplate(file)
         " Add skeleton fillings for Python (normal and unittest) files
         if a:file =~ 'test_.*\.py$'
-            execute "0r ~/.vim/skeleton/test_template.py"
+            execute "0r ~/vimrc/vim/skeleton/test_template.py"
         elseif a:file =~ '.*\.py$'
-            execute "0r ~/.vim/skeleton/template.py"
+            execute "0r ~/vimrc/vim/skeleton/template.py"
         endif
     endfunction
     endif
@@ -805,7 +808,7 @@ autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "norm
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Common abbreviations / misspellings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-source ~/.vim/autocorrect.vim
+source ~/vimrc/vim/autocorrect.vim
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Extra vi-compatibility 
@@ -821,7 +824,7 @@ au filetype vim set formatoptions-=o
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Extra user or machine specific settings 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-source ~/.vim/user.vim
+source ~/vimrc/vim/user.vim
 
 " Creating underline/overline headings for markup languages
 " Inspired by http://sphinx.pocoo.org/rest.html#sections
