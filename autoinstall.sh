@@ -1,6 +1,4 @@
 #!/bin/sh
-INSTALL_TO=~/Projects
-
 warn() {
     echo "$1" >&2
 }
@@ -10,12 +8,7 @@ die() {
     exit 1
 }
 
-[ -e "$INSTALL_TO/vimrc" ] && die "$INSTALL_TO/vimrc already exists."
-[ -e "~/.vim" ] && die "~/.vim already exists."
-[ -e "~/.vimrc" ] && die "~/.vimrc already exists."
-
-cd "$INSTALL_TO"
-git clone git://github.com/nvie/vimrc.git
+git clone git://github.com/likun5053/vimrc.git
 cd vimrc
 
 # Download vim plugin bundles
@@ -26,10 +19,11 @@ git submodule update
 cd vim/ruby/command-t
 (ruby extconf.rb && make clean && make) || warn "Ruby compilation failed. Ruby not installed, maybe?"
 
-# Symlink ~/.vim and ~/.vimrc
-cd ~
-ln -s "$INSTALL_TO/vimrc/vimrc" .vimrc
-ln -s "$INSTALL_TO/vimrc/vim" .vim
-touch ~/.vim/user.vim
+touch ~/vimrc/vim/user.vim
 
-echo "Installed and configured .vim, have fun."
+echo '
+set runtimepath=~/vimrc/vim,~/vimrc/vim/after,\$VIMRUNTIME
+source ~/vimrc/vimrc
+helptags ~/vimrc/vim/doc'> ~/.vimrc
+
+echo "Installed and configured vim, have fun."
