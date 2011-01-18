@@ -232,7 +232,7 @@ if MySys() == "windows"
     autocmd! bufwritepost vimrc source ~/vimrc/vimrc
 else
     " Fast editing of the .vimrc
-    map <leader>e :e! ~/vimrc/vim/vimrc<cr>
+    map <leader>e :e! ~/vimrc/vimrc<cr>
 
     " When vimrc is edited, reload it
     autocmd! bufwritepost vimrc source ~/vimrc/vimrc
@@ -851,7 +851,7 @@ if has("gui_running")
     "set guioptions-=L
     "set guioptions-=r
     "set guioptions-=R
-
+    set go=
     " Screen recording mode
     function! ScreenRecordMode()
         set columns=86
