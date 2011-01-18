@@ -173,8 +173,6 @@ endfunction
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>highlight
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-endif
-
 if &t_Co > 2 || has("gui_running")
    syntax on                    " switch syntax highlighting on, when the terminal has colors
 endif
@@ -221,6 +219,10 @@ nnoremap k gk
 
 " Fast saving
 nmap <leader>w :w!<cr>
+
+func! MySys()
+    return 'linux'
+endfunc
 
 if MySys() == "windows"
     " Fast editing of the .vimrc
@@ -458,9 +460,6 @@ nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
-func! MySys()
-    return 'linux'
-endfunc
 
 if MySys() == "mac"
   nmap <D-j> <M-j>
