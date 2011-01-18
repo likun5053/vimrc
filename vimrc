@@ -458,8 +458,9 @@ nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
-func! Mysys()
+func! MySys()
     return 'linux'
+endfunc
 
 if MySys() == "mac"
   nmap <D-j> <M-j>
@@ -840,17 +841,17 @@ iab llorem Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacus
 iab lllorem Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu.  Nulla non quam erat, luctus consequat nisi.  Integer hendrerit lacus sagittis erat fermentum tincidunt.  Cras vel dui neque.  In sagittis commodo luctus.  Mauris non metus dolor, ut suscipit dui.  Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum.  Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor
 
 if has("gui_running")
-    set guifont=Inconsolata:h14
+    "set guifont=Inconsolata:h14
     "colorscheme baycomb
     "colorscheme mustang
     colorscheme molokai
 
     " Remove toolbar, left scrollbar and right scrollbar
-    set guioptions-=T
-    set guioptions-=l
-    set guioptions-=L
-    set guioptions-=r
-    set guioptions-=R
+    "set guioptions-=T
+    "set guioptions-=l
+    "set guioptions-=L
+    "set guioptions-=r
+    "set guioptions-=R
 
     " Screen recording mode
     function! ScreenRecordMode()
