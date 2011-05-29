@@ -58,3 +58,9 @@
 [submodule "vim/bundle/neocomplcache"]
 	path = vim/bundle/neocomplcache
 	url = git://github.com/Shougo/neocomplcache.git
+[submodule "vim/bundle/trinity"]
+	path = vim/bundle/trinity
+	url = git://github.com/likun5053/trinity.vim.git
+[submodule "vim/bundle/srcexpl"]
+	path = vim/bundle/srcexpl
+	url = git://github.com/vim-scripts/Source-Explorer-srcexpl.vim.git

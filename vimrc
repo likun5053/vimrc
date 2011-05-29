@@ -561,15 +561,9 @@ map <leader>sp [s
 map <leader>sa zg
 map <leader>s? z=
 
-
-let g:SuperTabMappingForward = '<nul>'
-let g:SuperTabMappingBackward = '<s-nul>'
-"let g:acp_enableAtStartup = 1
-"ino <c-j> <c-r>=TriggerSnippet()<cr>
-"snor <c-j> <esc>i<right><c-r>=TriggerSnippet()<cr>
-
-" Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => neocmplcache settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use neocomplcache.
 let g:neocomplcache_enable_at_startup = 1
 " Use smartcase.
@@ -641,76 +635,11 @@ let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
 let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => NERDTree settings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Put focus to the NERD Tree with F3 (tricked by quickly closing it and
-" immediately showing it again, since there is no :NERDTreeFocus command)
-nmap <leader>n :NERDTreeClose<CR>:NERDTreeToggle<CR>
-nmap <leader>m :NERDTreeClose<CR>:NERDTreeFind<CR>
-nmap <leader>N :NERDTreeClose<CR>
-
-" Store the bookmarks file
-let NERDTreeBookmarksFile=expand("~/vimrc/vim/NERDTreeBookmarks")
-
-" Show the bookmarks table on startup
-let NERDTreeShowBookmarks=1
-
-" Show hidden files, too
-let NERDTreeShowFiles=1
-let NERDTreeShowHidden=1
-
-" Quit on opening files from the tree
-let NERDTreeQuitOnOpen=0
-
-" Highlight the selected entry in the tree
-let NERDTreeHighlightCursorline=1
-
-" Use a single click to fold/unfold directories and a double click to open
-" files
-let NERDTreeMouseMode=2
-
-" Don't display these kinds of files
-let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.py\$class$', '\.obj$',
-            \ '\.o$', '\.so$', '\.egg$', '^\.git$' ]
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Managing buffers with LustyJuggler 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map ,b :LustyJuggler<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => TagList settings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <leader>l :TlistClose<CR>:TlistToggle<CR>
-nmap <leader>L :TlistClose<CR>
-
-" quit Vim when the TagList window is the last open window
-let Tlist_Exit_OnlyWindow=1         " quit when TagList is the last open window
-let Tlist_GainFocus_On_ToggleOpen=1 " put focus on the TagList window when it opens
-"let Tlist_Process_File_Always=1     " process files in the background, even when the TagList window isn't open
-"let Tlist_Show_One_File=1           " only show tags from the current buffer, not all open buffers
-let Tlist_WinWidth=40               " set the width
-let Tlist_Inc_Winwidth=1            " increase window by 1 when growing
-
-" shorten the time it takes to highlight the current tag (default is 4 secs)
-" note that this setting influences Vim's behaviour when saving swap files,
-" but we have already turned off swap files (earlier)
-"set updatetime=1000
-
-" the default ctags in /usr/bin on the Mac is GNU ctags, so change it to the
-" exuberant ctags version in /usr/local/bin
-let Tlist_Ctags_Cmd = '/usr/local/bin/ctags'
-
-" show function/method prototypes in the list
-let Tlist_Display_Prototype=1
-
-" don't show scope info
-let Tlist_Display_Tag_Scope=0
-
-" show TagList window on the right
-let Tlist_Use_Right_Window=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Conflict markers 
@@ -720,6 +649,14 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 
 " shortcut to jump to next conflict marker
 nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
+
+ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => trinity settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <leader>nn :TrinityToggleAll<CR>
+nmap <leader>nl :TrinityToggleNERDTree<CR>
+nmap <leader>nr :TrinityToggleTagList<CR>
+"nmap <leader>nd :TrinityToggleSourceExplorer<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Filetype specific handling
