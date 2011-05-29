@@ -45,7 +45,7 @@
 	url = git://github.com/msanders/snipmate.vim.git
 [submodule "vim/bundle/supertab"]
 	path = vim/bundle/supertab
-	url = git://github.com/vim-scripts/SuperTab.git
+    url= git://github.com/ervandew/supertab.git
 [submodule "vim/bundle/matchit"]
 	path = vim/bundle/matchit
 	url = git://github.com/vim-scripts/matchit.zip.git
