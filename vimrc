@@ -28,8 +28,8 @@ set nocompatible
 " Use pathogen to easily modify the runtime path to include all plugins under
 " the ~/vimrc/vim/bundle directory
 filetype off                    " force reloading *after* pathogen loaded
-call pathogen#helptags()
 call pathogen#runtime_append_all_bundles()
+call pathogen#helptags()
 filetype plugin indent on       " enable detection, plugins and indenting in one step
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -232,7 +232,7 @@ if MySys() == "windows"
     autocmd! bufwritepost vimrc source ~/vimrc/vimrc
 else
     " Fast editing of the .vimrc
-    map <leader>e :e! ~/vimrc/vim/vimrc<cr>
+    map <leader>e :e! ~/vimrc/vimrc<cr>
 
     " When vimrc is edited, reload it
     autocmd! bufwritepost vimrc source ~/vimrc/vimrc
@@ -497,7 +497,7 @@ nmap <leader>Y "+yy
 nmap <leader>p "+p
 nmap <leader>P "+P
 
-" YankRing stuff
+" YankRing stuff                           //
 let g:yankring_history_dir = '~/vimrc/vim/.tmp'
 nmap <leader>r :YRShow<CR>
 
@@ -581,7 +581,7 @@ let NERDTreeShowFiles=1
 let NERDTreeShowHidden=1
 
 " Quit on opening files from the tree
-let NERDTreeQuitOnOpen=1
+let NERDTreeQuitOnOpen=0
 
 " Highlight the selected entry in the tree
 let NERDTreeHighlightCursorline=1
@@ -851,6 +851,7 @@ if has("gui_running")
     "set guioptions-=L
     "set guioptions-=r
     "set guioptions-=R
+    set go=
 
     " Screen recording mode
     function! ScreenRecordMode()
