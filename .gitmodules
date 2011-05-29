@@ -64,3 +64,6 @@
 [submodule "vim/bundle/srcexpl"]
 	path = vim/bundle/srcexpl
 	url = git://github.com/vim-scripts/Source-Explorer-srcexpl.vim.git
+[submodule "vim/bundle/rope"]
+	path = vim/bundle/rope
+	url = git://github.com/klen/rope-vim.git

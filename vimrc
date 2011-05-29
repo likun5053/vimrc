@@ -600,12 +600,12 @@ inoremap <expr><C-l>     neocomplcache#complete_common_string()
 
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
-inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
+inoremap <expr><CR>  neocomplcache#smart_close_popup()
 " <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : neocomplcache#manual_keyword_complete()
 " <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><C-h> neocomplcache#smart_close_popup()
+inoremap <expr><BS> neocomplcache#smart_close_popup()
 inoremap <expr><C-y>  neocomplcache#close_popup()
 inoremap <expr><C-e>  neocomplcache#cancel_popup()
 
@@ -653,7 +653,7 @@ nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => trinity settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <leader>nn :TrinityToggleAll<CR>
+nmap <leader>n :TrinityToggleAll<CR>
 nmap <leader>nl :TrinityToggleNERDTree<CR>
 nmap <leader>nr :TrinityToggleTagList<CR>
 "nmap <leader>nd :TrinityToggleSourceExplorer<CR>
