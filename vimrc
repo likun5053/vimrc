@@ -689,10 +689,8 @@ if has("autocmd")
         " Auto-closing of HTML/XML tags
         let g:closetag_default_xml=1
         autocmd filetype html,htmldjango let b:closetag_html_style=1
-        autocmd filetype html,xhtml,xml source ~/vimrc/vim/scripts/closetag.vim
 
-        " Enable Sparkup for lightning-fast HTML editing
-        let g:sparkupExecuteMapping = '<leader>e'
+        autocmd filetype html,xhtml,xml source ~/.vim/scripts/closetag.vim
     augroup end " }}}
 
     augroup python_files "{{{
@@ -704,7 +702,7 @@ if has("autocmd")
             let n = 1
             while n < 50 && n < line("$")
                 " check for django
-                if getline(n) =~ 'import\s\+\<django\>'
+                if getline(n) =~ 'import\s\+\<django\>' || getline(n) =~ 'from\s\+\<django\>\s\+import'
                     set ft=python.django
                     "set syntax=python
                     return
@@ -785,18 +783,16 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("autocmd")
 
-    if !exists('*LoadTemplate')
-    function LoadTemplate(file)
+"    if !exists('*LoadTemplate')
+"    function LoadTemplate(file)
         " Add skeleton fillings for Python (normal and unittest) files
-        if a:file =~ 'test_.*\.py$'
-            execute "0r ~/vimrc/vim/skeleton/test_template.py"
-        elseif a:file =~ '.*\.py$'
-            execute "0r ~/vimrc/vim/skeleton/template.py"
-        endif
-    endfunction
-    endif
-
-    autocmd BufNewFile * call LoadTemplate(@%)
+"        if a:file =~ 'test_.*\.py$'
+"            execute "0r ~/vimrc/vim/skeleton/test_template.py"
+"        elseif a:file =~ '.*\.py$'
+"            execute "0r ~/vimrc/vim/skeleton/template.py"
+"        endif
+"    endfunction
+"    endif
 
 endif " has("autocmd")
 
@@ -852,7 +848,6 @@ if has("gui_running")
     "set guioptions-=r
     "set guioptions-=R
     set go=
-
     " Screen recording mode
     function! ScreenRecordMode()
         set columns=86
