@@ -67,3 +67,6 @@
 [submodule "vim/bundle/rope"]
 	path = vim/bundle/rope
 	url = git://github.com/klen/rope-vim.git
+[submodule "vim/bundle/virtualenv"]
+	path = vim/bundle/virtualenv
+	url = git://github.com/vim-scripts/virtualenv.vim.git

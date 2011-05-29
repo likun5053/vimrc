@@ -729,7 +729,8 @@ if has("autocmd")
             " go with html
             set ft=python
         endfun
-        "autocmd BufNewFile,BufRead *.py call s:DetectPythonVariant()
+        autocmd BufNewFile,BufRead *.py call s:DetectPythonVariant()
+        autocmd filetype python let $WORKON_HOME=fnamemodify("~/workon",":p")
 
         " PEP8 compliance (set 1 tab = 4 chars explicitly, even if set
         " earlier, as it is important)
