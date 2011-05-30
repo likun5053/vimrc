@@ -11,10 +11,20 @@ die() {
 git clone git://github.com/likun5053/vimrc.git
 cd vimrc
 
+INSTALL_DIR=`pwd`
+
 # Download vim plugin bundles
 git submodule init
 git submodule update
 
+if [ -d ~/vimrc ]l;then
+    rm -rf ~/vimrc
+fi
+ln -sf ${INSTALL_DIR} ~/vimrc
+
+if [ ! -d ~/vimrc/vim/.tmp ];then
+    mkdir vim/.tmp
+fi
 # Compile command-t for the current platform
 cd vim/ruby/command-t
 (ruby extconf.rb && make clean && make) || warn "Ruby compilation failed. Ruby not installed, maybe?"
