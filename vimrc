@@ -77,6 +77,7 @@ set formatoptions+=1            " When wrapping paragraphs, don't end lines
 " See http://stevelosh.com/blog/2010/09/coming-home-to-vim
 nnoremap / /\v
 vnoremap / /\v
+map <C-s> /
 
 " Speed up scrolling of the viewport slightly
 nnoremap <C-e> 2<C-e>
@@ -190,6 +191,9 @@ map! <F1> <Esc>
 
 " Quickly close the current window
 nnoremap <leader>q :q<CR>
+nnoremap <leader>qa :qa<CR>
+nnoremap <leader>q! :q!<CR>
+nnoremap <leader>qa! :qa!<CR>
 
 " Use Q for formatting the current paragraph (or visual selection)
 vmap Q gq
@@ -565,6 +569,9 @@ map <leader>s? z=
 " => neocmplcache settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use neocomplcache.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:acp_enableAtStartup = 0
+" Use neocomplcache.
 let g:neocomplcache_enable_at_startup = 1
 " Use smartcase.
 let g:neocomplcache_enable_smart_case = 1
@@ -579,13 +586,13 @@ let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
     \ 'default' : '',
-    \ 'vimshell' : '~/vimrc/vim/.vimshell_hist',
-    \ 'scheme' : '~/vimrc/vim/.gosh_completions'
-    \ }
-
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+	
 " Define keyword.
 if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
+    let g:neocomplcache_keyword_patterns = {}
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 
@@ -608,7 +615,6 @@ inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><C-y>  neocomplcache#close_popup()
 inoremap <expr><C-e>  neocomplcache#cancel_popup()
-inoremap <expr><C-e>  neocomplcache#cancel_popup()
 
 " AutoComplPop like behavior.
 "let g:neocomplcache_enable_auto_select = 1
@@ -617,7 +623,7 @@ inoremap <expr><C-e>  neocomplcache#cancel_popup()
 "set completeopt+=longest
 "let g:neocomplcache_enable_auto_select = 1
 "let g:neocomplcache_disable_auto_complete = 1
-"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<TAB>"
+"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
 "inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
 
 " Enable omni completion.
@@ -629,15 +635,13 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " Enable heavy omni completion.
 if !exists('g:neocomplcache_omni_patterns')
-  let g:neocomplcache_omni_patterns = {}
+	let g:neocomplcache_omni_patterns = {}
 endif
 let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
 let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Managing buffers with LustyJuggler 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map ,b :LustyJuggler<CR>
@@ -708,7 +712,7 @@ if has("autocmd")
         let g:closetag_default_xml=1
         autocmd filetype html,htmldjango let b:closetag_html_style=1
 
-        autocmd filetype html,xhtml,xml source ~/.vim/scripts/closetag.vim
+        autocmd filetype html,xhtml,xml source ~/vimrc/vim/scripts/closetag.vim
     augroup end " }}}
 
     augroup python_files "{{{
@@ -737,7 +741,7 @@ if has("autocmd")
         " earlier, as it is important)
         autocmd filetype python setlocal expandtab shiftwidth=4 tabstop=4 softtabstop=4
         autocmd filetype python setlocal textwidth=80
-        autocmd filetype python match ErrorMsg '\%>80v.\+'
+        "autocmd filetype python match ErrorMsg '\%>80v.\+' 
 
         " But disable autowrapping as it is super annoying
         autocmd filetype python setlocal formatoptions-=t
