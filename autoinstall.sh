@@ -17,6 +17,7 @@ INSTALL_DIR=`pwd`
 git submodule init
 git submodule update
 
+git submodule foreach git pull origin master
 if [ -d ~/vimrc ]l;then
     rm -rf ~/vimrc
 fi
