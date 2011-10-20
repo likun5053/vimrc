@@ -52,9 +52,9 @@ set number                      " always show line numbers
 set showmatch                   " set show matching parenthesis
 set ignorecase                  " ignore case when searching
 set smartcase                   " ignore case if search pattern is all lowercase,
-                                "    case-sensitive otherwise
+"    case-sensitive otherwise
 set smarttab                    " insert tabs on the start of a line according to
-                                "    shiftwidth, not tabstop
+"    shiftwidth, not tabstop
 set scrolloff=4                 " keep 4 lines off the edges of the screen when scrolling
 set virtualedit=all             " allow the cursor to go in to "invalid" places
 set hlsearch                    " highlight search terms
@@ -63,15 +63,15 @@ set gdefault                    " search/replace "globally" (on a line) by defau
 set listchars=tab:▸\ ,trail:·,extends:#,nbsp:·
 
 set nolist                      " don't show invisible characters by default,
-                                " but it is enabled for some file types (see later)
+" but it is enabled for some file types (see later)
 set pastetoggle=<F2>            " when in insert mode, press <F2> to go to
-                                "    paste mode, where you can paste mass data
-                                "    that won't be autoindented
+"    paste mode, where you can paste mass data
+"    that won't be autoindented
 set mouse=a                     " enable using the mouse if terminal emulator
-                                "    supports it (xterm does)
+"    supports it (xterm does)
 set fileformats="unix,dos,mac"
 set formatoptions+=1            " When wrapping paragraphs, don't end lines
-                                "    with 1-letter words (looks stupid)
+"    with 1-letter words (looks stupid)
 
 " Thanks to Steve Losh for this liberating tip
 " See http://stevelosh.com/blog/2010/09/coming-home-to-vim
@@ -90,7 +90,7 @@ set foldcolumn=2                " add a fold column
 set foldmethod=marker           " detect triple-{ style fold markers
 set foldlevelstart=0            " start out with everything folded
 set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
-                                " which commands trigger auto-unfold
+" which commands trigger auto-unfold
 function! MyFoldText()
     let line = getline(v:foldstart)
 
@@ -115,7 +115,7 @@ set termencoding=utf-8
 set encoding=utf-8
 set lazyredraw                  " don't update the display while executing macros
 set laststatus=2                " tell VIM to always put a status line in, even
-                                "    if there is only one window
+"    if there is only one window
 set cmdheight=2                 " use a status bar that is 2 rows high
 " }}}
 
@@ -123,12 +123,12 @@ set cmdheight=2                 " use a status bar that is 2 rows high
 " => Vim behaviour 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set hidden                      " hide buffers instead of closing them this
-                                "    means that the current buffer can be put
-                                "    to background without being written; and
-                                "    that marks and undo history are preserved
+"    means that the current buffer can be put
+"    to background without being written; and
+"    that marks and undo history are preserved
 set switchbuf=useopen           " reveal already opened files from the
-                                " quickfix window instead of opening new
-                                " buffers
+" quickfix window instead of opening new
+" buffers
 set history=1000                " remember more commands and search history
 set undolevels=1000             " use many muchos levels of undo
 if v:version >= 730
@@ -137,21 +137,21 @@ if v:version >= 730
 endif
 set nobackup                    " do not keep backup files, it's 70's style cluttering
 set noswapfile                  " do not write annoying intermediate swap files,
-                                "    who did ever restore from swap files anyway?
+"    who did ever restore from swap files anyway?
 set directory=~/vimrc/vim/tmp,~/tmp,/tmp
-                                " store swap files in one of these directories
-                                "    (in case swapfile is ever turned on)
+" store swap files in one of these directories
+"    (in case swapfile is ever turned on)
 set viminfo='20,\"80            " read/write a .viminfo file, don't store more
-                                "    than 80 lines of registers
+"    than 80 lines of registers
 set wildmenu                    " make tab completion for files/buffers act like bash
 set wildmode=list:full          " show a list when pressing tab and complete
-                                "    first full match
+"    first full match
 set wildignore=*.swp,*.bak,*.pyc,*.class
 set title                       " change the terminal's title
 set visualbell                  " don't beep
 set noerrorbells                " don't beep
 set showcmd                     " show (partial) command in the last line of the screen
-                                "    this also shows visual selection info
+"    this also shows visual selection info
 set nomodeline                  " disable mode lines (security measure)
 "set ttyfast                     " always use a fast terminal
 set cursorline                  " underline the current line, for quick orientation
@@ -161,13 +161,13 @@ nmap <silent> <leader>f :QFix<CR>
 
 command! -bang -nargs=? QFix call QFixToggle(<bang>0)
 function! QFixToggle(forced)
-  if exists("g:qfix_win") && a:forced == 0
-    cclose
-    unlet g:qfix_win
-  else
-    copen 10
-    let g:qfix_win = bufnr("$")
-  endif
+    if exists("g:qfix_win") && a:forced == 0
+        cclose
+        unlet g:qfix_win
+    else
+        copen 10
+        let g:qfix_win = bufnr("$")
+    endif
 endfunction
 
 
@@ -175,7 +175,7 @@ endfunction
 " =>highlight
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if &t_Co > 2 || has("gui_running")
-   syntax on                    " switch syntax highlighting on, when the terminal has colors
+    syntax on                    " switch syntax highlighting on, when the terminal has colors
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -304,6 +304,9 @@ cno $c e <C-\>eCurrentFileDir("e")<cr>
 " $q is super useful when browsing on the command line
 cno $q <C-\>eDeleteTillSlash()<cr>
 
+:command! -nargs=+ Calc :py print <args>
+:py from math import *
+
 " Bash like keys for the command line
 cnoremap <C-A>		<Home>
 cnoremap <C-E>		<End>
@@ -318,29 +321,29 @@ map <C-k> <C-w>k
 map <C-l> <C-w>l
 
 func! Cwd()
-  let cwd = getcwd()
-  return "e " . cwd 
+    let cwd = getcwd()
+    return "e " . cwd 
 endfunc
 
 func! DeleteTillSlash()
-  let g:cmd = getcmdline()
-  if MySys() == "linux" || MySys() == "mac"
-    let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*", "\\1", "")
-  else
-    let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\]\\).*", "\\1", "")
-  endif
-  if g:cmd == g:cmd_edited
+    let g:cmd = getcmdline()
     if MySys() == "linux" || MySys() == "mac"
-      let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*/", "\\1", "")
+        let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*", "\\1", "")
     else
-      let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\\]\\).*\[\\\\\]", "\\1", "")
+        let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\]\\).*", "\\1", "")
     endif
-  endif   
-  return g:cmd_edited
+    if g:cmd == g:cmd_edited
+        if MySys() == "linux" || MySys() == "mac"
+            let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*/", "\\1", "")
+        else
+            let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\\]\\).*\[\\\\\]", "\\1", "")
+        endif
+    endif   
+    return g:cmd_edited
 endfunc
 
 func! CurrentFileDir(cmd)
-  return a:cmd . " " . expand("%:p:h") . "/"
+    return a:cmd . " " . expand("%:p:h") . "/"
 endfunc
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -373,34 +376,64 @@ map <leader>te :tabedit
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove 
 
+" new tab
+nnoremap <C-t>     :tabnew<cr>
+vnoremap <C-t>     <C-C>:tabnew<cr>
+inoremap <C-t>     <C-C>:tabnew<cr>
+"tab left
+nnoremap <C-h>     :tabprevious<cr>
+vnoremap <C-h>     <C-C>:tabprevious<cr>
+inoremap <C-h>     <C-O>:tabprevious<cr>
+nnoremap <C-S-tab> :tabprevious<cr>
+vnoremap <C-S-tab> <C-C>:tabprevious<cr>
+inoremap <C-S-tab> <C-O>:tabprevious<cr>
+"tab right
+nnoremap <C-l>     :tabnext<cr>
+vnoremap <C-l>     <C-C>:tabnext<cr>
+inoremap <C-l>     <C-O>:tabnext<cr>
+nnoremap <C-tab>   :tabnext<cr>
+vnoremap <C-tab>   <C-C>:tabnext<cr>
+inoremap <C-tab>   <C-O>:tabnext<cr>
+"tab indexes
+noremap <A-1> 1gt
+noremap <A-2> 2gt
+noremap <A-3> 3gt
+noremap <A-4> 4gt
+noremap <A-5> 5gt
+noremap <A-6> 6gt
+noremap <A-7> 7gt
+noremap <A-8> 8gt
+noremap <A-9> 9gt
+noremap <A-0> 10gt
+
 " When pressing <leader>cd switch to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>
 
 
 command! Bclose call <SID>BufcloseCloseIt()
 function! <SID>BufcloseCloseIt()
-   let l:currentBufNum = bufnr("%")
-   let l:alternateBufNum = bufnr("#")
+    let l:currentBufNum = bufnr("%")
+    let l:alternateBufNum = bufnr("#")
 
-   if buflisted(l:alternateBufNum)
-     buffer #
-   else
-     bnext
-   endif
+    if buflisted(l:alternateBufNum)
+        buffer #
+    else
+        bnext
+    endif
 
-   if bufnr("%") == l:currentBufNum
-     new
-   endif
+    if bufnr("%") == l:currentBufNum
+        new
+    endif
 
-   if buflisted(l:currentBufNum)
-     execute("bdelete! ".l:currentBufNum)
-   endif
+    if buflisted(l:currentBufNum)
+        execute("bdelete! ".l:currentBufNum)
+    endif
 endfunction
 
 " Specify the behavior when switching between buffers 
 try
-  set switchbuf=usetab
-  set stal=2
+    set switchbuf=usetab
+    set stal=2
 catch
 endtry
 
@@ -466,17 +499,17 @@ vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
 
 if MySys() == "mac"
-  nmap <D-j> <M-j>
-  nmap <D-k> <M-k>
-  vmap <D-j> <M-j>
-  vmap <D-k> <M-k>
+    nmap <D-j> <M-j>
+    nmap <D-k> <M-k>
+    vmap <D-j> <M-j>
+    vmap <D-k> <M-k>
 endif
 
 "Delete trailing white space, useful for Python ;)
 func! DeleteTrailingWS()
-  exe "normal mz"
-  %s/\s\+$//ge
-  exe "normal `z"
+    exe "normal mz"
+    %s/\s\+$//ge
+    exe "normal `z"
 endfunc
 autocmd BufWrite *.py :call DeleteTrailingWS()
 
@@ -565,6 +598,13 @@ map <leader>sp [s
 map <leader>sa zg
 map <leader>s? z=
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Command-t 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:CommandTMaxHeight = 20
+let g:CommandTMaxFiles = 20
+let g:CommandTMatchWindowAtTop = 1 
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Neocomplcache config
@@ -585,11 +625,11 @@ let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
-        \ }
-	
+            \ 'default' : '',
+            \ 'vimshell' : $HOME.'/.vimshell_hist',
+            \ 'scheme' : $HOME.'/.gosh_completions'
+            \ }
+
 " Define keyword.
 if !exists('g:neocomplcache_keyword_patterns')
     let g:neocomplcache_keyword_patterns = {}
@@ -635,7 +675,7 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " Enable heavy omni completion.
 if !exists('g:neocomplcache_omni_patterns')
-	let g:neocomplcache_omni_patterns = {}
+    let g:neocomplcache_omni_patterns = {}
 endif
 let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
@@ -656,7 +696,7 @@ match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
 " shortcut to jump to next conflict marker
 nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 
- """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => trinity settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nmap <leader>n :TrinityToggleAll<CR>
@@ -807,16 +847,16 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("autocmd")
 
-"    if !exists('*LoadTemplate')
-"    function LoadTemplate(file)
-        " Add skeleton fillings for Python (normal and unittest) files
-"        if a:file =~ 'test_.*\.py$'
-"            execute "0r ~/vimrc/vim/skeleton/test_template.py"
-"        elseif a:file =~ '.*\.py$'
-"            execute "0r ~/vimrc/vim/skeleton/template.py"
-"        endif
-"    endfunction
-"    endif
+    "    if !exists('*LoadTemplate')
+    "    function LoadTemplate(file)
+    " Add skeleton fillings for Python (normal and unittest) files
+    "        if a:file =~ 'test_.*\.py$'
+    "            execute "0r ~/vimrc/vim/skeleton/test_template.py"
+    "        elseif a:file =~ '.*\.py$'
+    "            execute "0r ~/vimrc/vim/skeleton/template.py"
+    "        endif
+    "    endfunction
+    "    endif
 
 endif " has("autocmd")
 
@@ -835,11 +875,11 @@ source ~/vimrc/vim/autocorrect.vim
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " set extra vi-compatible options
 set cpoptions+=$     " when changing a line, don't redisplay, but put a '$' at
-                     " the end during the change
+" the end during the change
 set formatoptions-=o " don't start new lines w/ comment leader on pressing 'o'
 au filetype vim set formatoptions-=o
-                     " somehow, during vim filetype detection, this gets set
-                     " for vim files, so explicitly unset it again
+" somehow, during vim filetype detection, this gets set
+" for vim files, so explicitly unset it again
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Extra user or machine specific settings 
@@ -860,7 +900,7 @@ iab llorem Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacus
 iab lllorem Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu.  Nulla non quam erat, luctus consequat nisi.  Integer hendrerit lacus sagittis erat fermentum tincidunt.  Cras vel dui neque.  In sagittis commodo luctus.  Mauris non metus dolor, ut suscipit dui.  Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum.  Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor
 
 if has("gui_running")
-    "set guifont=Inconsolata:h14
+    set guifont=Monaco\ 10
     "colorscheme baycomb
     "colorscheme mustang
     colorscheme molokai
@@ -875,9 +915,11 @@ if has("gui_running")
     " Screen recording mode
     function! ScreenRecordMode()
         set columns=86
-        set guifont=Droid\ Sans\ Mono:h14
+        set guifont=Monaco\ 11
         set cmdheight=1
         colorscheme molokai_deep
     endfunction
     command! -bang -nargs=0 ScreenRecordMode call ScreenRecordMode()
 endif
+
+
