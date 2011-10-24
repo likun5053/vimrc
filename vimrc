@@ -38,6 +38,7 @@ filetype plugin indent on       " enable detection, plugins and indenting in one
 " Change the mapleader from \ to ,
 let mapleader=","
 
+set autoread
 set showmode                    " always show what mode we're currently editing in
 set nowrap                      " don't wrap lines
 set tabstop=4                   " a tab is four spaces
@@ -381,19 +382,19 @@ nnoremap <C-t>     :tabnew<cr>
 vnoremap <C-t>     <C-C>:tabnew<cr>
 inoremap <C-t>     <C-C>:tabnew<cr>
 "tab left
-nnoremap <C-h>     :tabprevious<cr>
-vnoremap <C-h>     <C-C>:tabprevious<cr>
-inoremap <C-h>     <C-O>:tabprevious<cr>
-nnoremap <C-S-tab> :tabprevious<cr>
-vnoremap <C-S-tab> <C-C>:tabprevious<cr>
-inoremap <C-S-tab> <C-O>:tabprevious<cr>
+"nnoremap <C-h>     :tabprevious<cr>
+"vnoremap <C-h>     <C-C>:tabprevious<cr>
+"inoremap <C-h>     <C-O>:tabprevious<cr>
+"nnoremap <C-S-tab> :tabprevious<cr>
+"vnoremap <C-S-tab> <C-C>:tabprevious<cr>
+"inoremap <C-S-tab> <C-O>:tabprevious<cr>
 "tab right
-nnoremap <C-l>     :tabnext<cr>
-vnoremap <C-l>     <C-C>:tabnext<cr>
-inoremap <C-l>     <C-O>:tabnext<cr>
-nnoremap <C-tab>   :tabnext<cr>
-vnoremap <C-tab>   <C-C>:tabnext<cr>
-inoremap <C-tab>   <C-O>:tabnext<cr>
+"nnoremap <C-l>     :tabnext<cr>
+"vnoremap <C-l>     <C-C>:tabnext<cr>
+"inoremap <C-l>     <C-O>:tabnext<cr>
+"nnoremap <C-tab>   :tabnext<cr>
+"vnoremap <C-tab>   <C-C>:tabnext<cr>
+"inoremap <C-tab>   <C-O>:tabnext<cr>
 "tab indexes
 noremap <A-1> 1gt
 noremap <A-2> 2gt
@@ -907,7 +908,7 @@ if has("gui_running")
 
     " Remove toolbar, left scrollbar and right scrollbar
     "set guioptions-=T
-    "set guioptions-=l
+    "set guioptions-=l                          G
     "set guioptions-=L
     "set guioptions-=r
     "set guioptions-=R
@@ -922,4 +923,14 @@ if has("gui_running")
     command! -bang -nargs=0 ScreenRecordMode call ScreenRecordMode()
 endif
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VimClojure
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let vimclojure#HighlightBuiltins=1
+let vimclojure#HighlightContrib=1
+let vimclojure#DynamicHighlighting=1
+let vimclojure#ParenRainbow=1
+let vimclojure#WantNailgun = 1
+let vimclojure#NailgunClient = "~/vimrc/vim/bundle/vimClojureLib/vimclojure-nailgun-client/ng"
 

@@ -73,3 +73,6 @@
 [submodule "vim/bundle/slimv"]
 	path = vim/bundle/slimv
 	url = git://github.com/likun5053/slimv.vim.git
+[submodule "vim/bundle/vimClojure"]
+	path = vim/bundle/vimClojure
+	url = git://github.com/vim-scripts/VimClojure.git
