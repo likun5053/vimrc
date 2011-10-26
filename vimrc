@@ -603,7 +603,7 @@ map <leader>s? z=
 " => Command-t 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:CommandTMaxHeight = 20
-let g:CommandTMaxFiles = 20
+let g:CommandTMaxFiles = 100
 let g:CommandTMatchWindowAtTop = 1 
 
 
