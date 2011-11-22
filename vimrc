@@ -361,6 +361,10 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
+map <leader>bb :b#<cr>
+map <C-X>b :b#<cr>
+map <C-X><C-F> :e %:p:h
+
 " Close the current buffer
 map <leader>bd :Bclose<cr>
 
@@ -683,10 +687,6 @@ let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
 let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
-
-" => Managing buffers with LustyJuggler 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map ,b :LustyJuggler<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Conflict markers 
