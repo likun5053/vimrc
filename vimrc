@@ -603,13 +603,6 @@ map <leader>sp [s
 map <leader>sa zg
 map <leader>s? z=
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Command-t 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:CommandTMaxHeight = 20
-let g:CommandTMaxFiles = 100
-let g:CommandTMatchWindowAtTop = 1 
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Neocomplcache config
@@ -625,8 +618,13 @@ let g:neocomplcache_enable_camel_case_completion = 1
 " Use underbar completion.
 let g:neocomplcache_enable_underbar_completion = 1
 " Set minimum syntax keyword length.
-let g:neocomplcache_min_syntax_length = 3
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+let g:neocomplcache_min_syntax_length            = 3
+
+let g:neocomplcache_lock_buffer_name_pattern     = '\*ku\*'
+
+let g:neocomplcache_snippets_dir =  '~/vimrc/vim/my/snippets'
+
+
 
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
@@ -685,8 +683,8 @@ endif
 let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
 "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
-let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
+"let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
+"let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Conflict markers 
@@ -799,7 +797,7 @@ if has("autocmd")
         autocmd filetype python imap <buffer> <S-F5> <Esc>:w<CR>:!ipython %<CR>
 
         " Run a quick static syntax check every time we save a Python file
-        autocmd BufWritePost *.py call Pyflakes()
+        "autocmd BufWritePost *.py call Pyflakes()
     augroup end " }}}
 
     augroup ruby_files "{{{
@@ -933,4 +931,39 @@ let vimclojure#DynamicHighlighting=1
 let vimclojure#ParenRainbow=1
 let vimclojure#WantNailgun = 1
 let vimclojure#NailgunClient = "~/vimrc/vim/bundle/vimClojureLib/vimclojure-nailgun-client/ng"
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => tabular
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" idea from  http://vimcasts.org/episodes/aligning-text-with-tabular-vim
+
+" temp diabled for conflicts
+"if exists(":Tabularize")
+  "nmap <Leader>a= :Tabularize /=<CR>
+  "vmap <Leader>a= :Tabularize /=<CR>
+  "nmap <Leader>a: :Tabularize /:\zs<CR>
+  "vmap <Leader>a: :Tabularize /:\zs<CR>
+"endif
+
+
+"inoremap <silent> = =<Esc>:call <SID>ealign()<CR>a
+"function! s:ealign()
+  "let p = '^.*=.*$'
+  "if exists(':Tabularize') && getline('.') =~# '^.*[=]' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
+    "let column = strlen(substitute(getline('.')[0:col('.')],'[^=]','','g'))
+    "let position = strlen(matchstr(getline('.')[0:col('.')],'.*=\s*\zs.*'))
+    "Tabularize/=/l1
+    "normal! 0
+    "call search(repeat('[^=]*=',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
+  "endif
+"endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => syntastic
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set statusline+=%{SyntasticStatuslineFlag()}
+let g:syntastic_auto_loc_list=1
+"sudo pip install pyflakes
+"sudo apt-get install tidy
 

@@ -76,9 +76,6 @@
 [submodule "vim/bundle/vimClojure"]
 	path = vim/bundle/vimClojure
 	url = git://github.com/vim-scripts/VimClojure.git
-[submodule "vim/bundle/bufexplorer"]
-	path = vim/bundle/bufexplorer
-	url = git://github.com/vim-scripts/bufexplorer.zip.git
 [submodule "vim/bundle/easymotion"]
 	path = vim/bundle/easymotion
 	url = git://github.com/Lokaltog/vim-easymotion.git
@@ -91,3 +88,6 @@
 [submodule "vim/bundle/syntastic"]
 	path = vim/bundle/syntastic
 	url = git://github.com/scrooloose/syntastic.git
+[submodule "vim/bundle/LustyExplorer"]
+	path = vim/bundle/LustyExplorer
+	url = git://github.com/vim-scripts/LustyExplorer.git
