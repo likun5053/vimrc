@@ -33,7 +33,7 @@ call pathogen#helptags()
 filetype plugin indent on       " enable detection, plugins and indenting in one step
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editing behaviour 
+" => Editing behaviour
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Change the mapleader from \ to ,
 let mapleader=","
@@ -85,7 +85,7 @@ nnoremap <C-e> 2<C-e>
 nnoremap <C-y> 2<C-y>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Folding rules 
+" => Folding rules
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set foldcolumn=2                " add a fold column
 set foldmethod=marker           " detect triple-{ style fold markers
@@ -110,7 +110,7 @@ endfunction
 set foldtext=MyFoldText()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editor layout 
+" => Editor layout
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set termencoding=utf-8
 set encoding=utf-8
@@ -121,7 +121,7 @@ set cmdheight=2                 " use a status bar that is 2 rows high
 " }}}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vim behaviour 
+" => Vim behaviour
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set hidden                      " hide buffers instead of closing them this
 "    means that the current buffer can be put
@@ -265,12 +265,12 @@ vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
 
 "
 " From an idea by Michael Naumann
-" 
+"
 function! CmdLine(str)
     exe "menu Foo.Bar :" . a:str
     emenu Foo.Bar
     unmenu Foo
-endfunction 
+endfunction
 
 function! VisualSelection(direction) range
     let l:saved_reg = @"
@@ -323,7 +323,7 @@ map <C-l> <C-w>l
 
 func! Cwd()
     let cwd = getcwd()
-    return "e " . cwd 
+    return "e " . cwd
 endfunc
 
 func! DeleteTillSlash()
@@ -339,7 +339,7 @@ func! DeleteTillSlash()
         else
             let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\\]\\).*\[\\\\\]", "\\1", "")
         endif
-    endif   
+    endif
     return g:cmd_edited
 endfunc
 
@@ -377,9 +377,9 @@ map <left> :bp<cr>
 
 " Tab configuration
 map <leader>tn :tabnew! %<cr>
-map <leader>te :tabedit 
+map <leader>te :tabedit
 map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove 
+map <leader>tm :tabmove
 
 " new tab
 nnoremap <C-t>     :tabnew<cr>
@@ -435,7 +435,7 @@ function! <SID>BufcloseCloseIt()
     endif
 endfunction
 
-" Specify the behavior when switching between buffers 
+" Specify the behavior when switching between buffers
 try
     set switchbuf=usetab
     set stal=2
@@ -687,7 +687,7 @@ let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
 "let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Conflict markers 
+" => Conflict markers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " highlight conflict markers
 match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
@@ -781,7 +781,7 @@ if has("autocmd")
         " earlier, as it is important)
         autocmd filetype python setlocal expandtab shiftwidth=4 tabstop=4 softtabstop=4
         autocmd filetype python setlocal textwidth=80
-        "autocmd filetype python match ErrorMsg '\%>80v.\+' 
+        "autocmd filetype python match ErrorMsg '\%>80v.\+'
 
         " But disable autowrapping as it is super annoying
         autocmd filetype python setlocal formatoptions-=t
@@ -860,7 +860,7 @@ if has("autocmd")
 endif " has("autocmd")
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Restore cursor position upon reopening files 
+" => Restore cursor position upon reopening files
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 
@@ -870,7 +870,7 @@ autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "norm
 source ~/vimrc/vim/autocorrect.vim
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Extra vi-compatibility 
+" => Extra vi-compatibility
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " set extra vi-compatible options
 set cpoptions+=$     " when changing a line, don't redisplay, but put a '$' at
@@ -881,7 +881,7 @@ au filetype vim set formatoptions-=o
 " for vim files, so explicitly unset it again
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Extra user or machine specific settings 
+" => Extra user or machine specific settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 source ~/vimrc/vim/user.vim
 
@@ -967,3 +967,8 @@ let g:syntastic_auto_loc_list=1
 "sudo pip install pyflakes
 "sudo apt-get install tidy
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Unite
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nmap <leader>t :Unite directory_mru file_mru file_rec buffer<CR>

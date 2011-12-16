@@ -91,3 +91,6 @@
 [submodule "vim/bundle/LustyExplorer"]
 	path = vim/bundle/LustyExplorer
 	url = git://github.com/vim-scripts/LustyExplorer.git
+[submodule "vim/bundle/unite"]
+	path = vim/bundle/unite
+	url = git://github.com/Shougo/unite.vim.git
