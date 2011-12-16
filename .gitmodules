@@ -67,9 +67,6 @@
 [submodule "vim/bundle/trinity"]
 	path = vim/bundle/trinity
 	url = git://github.com/likun5053/trinity.vim.git
-[submodule "vim/bundle/conque-shell"]
-	path = vim/bundle/conque-shell
-	url = git://github.com/vim-scripts/Conque-Shell.git
 [submodule "vim/bundle/slimv"]
 	path = vim/bundle/slimv
 	url = git://github.com/likun5053/slimv.vim.git
