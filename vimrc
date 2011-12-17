@@ -468,29 +468,6 @@ try
 catch
 endtry
 
-""""""""""""""""""""""""""""""
-" => Statusline
-""""""""""""""""""""""""""""""
-" Always hide the statusline
-set laststatus=2
-
-" Format the statusline
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c
-
-
-function! CurDir()
-    let curdir = substitute(getcwd(), '/Users/amir/', "~/", "g")
-    return curdir
-endfunction
-
-function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    else
-        return ''
-    endif
-endfunction
-
 
 """"""""""""""""""""""""""""""
 " => Parenthesis/bracket expanding
@@ -988,7 +965,6 @@ let vimclojure#NailgunClient = "~/vimrc/vim/bundle/vimClojureLib/vimclojure-nail
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => syntastic
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set statusline+=%{SyntasticStatuslineFlag()}
 let g:syntastic_auto_loc_list=1
 "sudo pip install pyflakes
 "sudo apt-get install tidy

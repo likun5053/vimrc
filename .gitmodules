@@ -97,3 +97,15 @@
 [submodule "vim/bundle/fuzzyfinder_textmate"]
 	path = vim/bundle/fuzzyfinder_textmate
 	url = git://github.com/sethbc/fuzzyfinder_textmate.git
+[submodule "vim/bundle/ZoomWin"]
+	path = vim/bundle/ZoomWin
+	url = git://github.com/vim-scripts/ZoomWin.git
+[submodule "vim/bundle/vim-indent-guides"]
+	path = vim/bundle/vim-indent-guides
+	url = git://github.com/nathanaelkane/vim-indent-guides.git
+[submodule "vim/bundle/vim-session"]
+	path = vim/bundle/vim-session
+	url = git://github.com/xolox/vim-session.git
+[submodule "vim/bundle/status"]
+	path = vim/bundle/status
+	url = git://github.com/dickeytk/status.vim.git
