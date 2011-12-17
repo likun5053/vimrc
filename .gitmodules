@@ -85,9 +85,15 @@
 [submodule "vim/bundle/syntastic"]
 	path = vim/bundle/syntastic
 	url = git://github.com/scrooloose/syntastic.git
-[submodule "vim/bundle/LustyExplorer"]
-	path = vim/bundle/LustyExplorer
-	url = git://github.com/vim-scripts/LustyExplorer.git
-[submodule "vim/bundle/unite"]
-	path = vim/bundle/unite
-	url = git://github.com/Shougo/unite.vim.git
+[submodule "vim/bundle/vimproc"]
+	path = vim/bundle/vimproc
+	url = git://github.com/Shougo/vimproc.git
+[submodule "vim/bundle/vimshell"]
+	path = vim/bundle/vimshell
+	url = git://github.com/Shougo/vimshell.git
+[submodule "vim/bundle/FuzzyFinder"]
+	path = vim/bundle/FuzzyFinder
+	url = git://github.com/vim-scripts/FuzzyFinder.git
+[submodule "vim/bundle/fuzzyfinder_textmate"]
+	path = vim/bundle/fuzzyfinder_textmate
+	url = git://github.com/sethbc/fuzzyfinder_textmate.git

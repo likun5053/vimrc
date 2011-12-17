@@ -23,12 +23,10 @@ if [ -d ~/vimrc ]l;then
 fi
 ln -sf ${INSTALL_DIR} ~/vimrc
 
+
 if [ ! -d ~/vimrc/vim/.tmp ];then
     mkdir vim/.tmp
 fi
-# Compile command-t for the current platform
-cd vim/ruby/command-t
-(ruby extconf.rb && make clean && make) || warn "Ruby compilation failed. Ruby not installed, maybe?"
 
 touch ~/vimrc/vim/user.vim
 

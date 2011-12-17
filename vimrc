@@ -308,13 +308,39 @@ cno $q <C-\>eDeleteTillSlash()<cr>
 :command! -nargs=+ Calc :py print <args>
 :py from math import *
 
-" Bash like keys for the command line
-cnoremap <C-A>		<Home>
-cnoremap <C-E>		<End>
-cnoremap <C-K>		<C-U>
-
-cnoremap <C-P> <Up>
-cnoremap <C-N> <Down>
+" Command-line mode keymappings:"{{{
+" <C-a>, A: move to head.
+cnoremap <C-a>          <Home>
+" <C-b>: previous char.
+cnoremap <C-b>          <Left>
+" <C-d>: delete char.
+cnoremap <C-d>          <Del>
+" <C-e>, E: move to end.
+cnoremap <C-e>          <End>
+" <C-f>: next char.
+cnoremap <C-f>          <Right>
+" <C-n>: next history.
+cnoremap <C-n>          <Down>
+" <C-p>: previous history.
+cnoremap <C-p>          <Up>
+" <C-k>, K: delete to end.
+cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+" <C-y>: paste.
+cnoremap <C-y>          <C-r>*
+" <C-s>: view history.
+cnoremap <C-s>          <C-f>
+" <C-l>: view completion list.
+cnoremap <C-l>          <C-d>
+" <A-b>, W: move to previous word.
+cnoremap <A-b>          <S-Left>
+" <A-f>, B: move to next word.
+cnoremap <A-f>          <S-Right>
+cnoremap <S-TAB>        <C-p>
+" <C-g>: decide candidate.
+cnoremap <C-g>          <Space><C-h>
+" <C-t>: insert space.
+cnoremap <C-t>          <Space>
+"}}}
 
 map <C-h> <C-w>h
 map <C-j> <C-w>j
@@ -969,6 +995,14 @@ let g:syntastic_auto_loc_list=1
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Unite
+" => FuzzyFinder
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <leader>t :Unite directory_mru file_mru file_rec buffer<CR>
+map <leader>t :FuzzyFinderTextMate<CR>
+let g:fuf_modesDisable = ['mrucmd',]
+nnoremap fb :FufBuffer<CR>
+nnoremap fr :FufFile<CR>
+nnoremap ff :FufCoverageFile<CR>
+nnoremap fd :FufDir<CR>
+nnoremap fm :FufMruFile<CR>
+nnoremap fh :FufHelp<CR>
+nnoremap fl :FufLine<CR>
