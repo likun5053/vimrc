@@ -109,3 +109,6 @@
 [submodule "vim/bundle/status"]
 	path = vim/bundle/status
 	url = git://github.com/dickeytk/status.vim.git
+[submodule "vim/bundle/screen"]
+	path = vim/bundle/screen
+	url = git://github.com/ervandew/screen.git

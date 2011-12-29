@@ -901,28 +901,28 @@ iab lorem Lorem ipsum dolor sit amet, consectetur adipiscing elit
 iab llorem Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu.  Nulla non quam erat, luctus consequat nisi
 iab lllorem Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu.  Nulla non quam erat, luctus consequat nisi.  Integer hendrerit lacus sagittis erat fermentum tincidunt.  Cras vel dui neque.  In sagittis commodo luctus.  Mauris non metus dolor, ut suscipit dui.  Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum.  Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor
 
-if has("gui_running")
-    set guifont=Monaco\ 10
-    "colorscheme baycomb
-    "colorscheme mustang
-    colorscheme molokai
+"if has("gui_running")
+set guifont=Monaco\ 10
+"colorscheme baycomb
+"colorscheme mustang
+colorscheme molokai
 
-    " Remove toolbar, left scrollbar and right scrollbar
-    "set guioptions-=T
-    "set guioptions-=l                          G
-    "set guioptions-=L
-    "set guioptions-=r
-    "set guioptions-=R
-    set go=
-    " Screen recording mode
-    function! ScreenRecordMode()
-        set columns=86
-        set guifont=Monaco\ 11
-        set cmdheight=1
-        colorscheme molokai_deep
-    endfunction
-    command! -bang -nargs=0 ScreenRecordMode call ScreenRecordMode()
-endif
+" Remove toolbar, left scrollbar and right scrollbar
+"set guioptions-=T
+"set guioptions-=l                          G
+"set guioptions-=L
+"set guioptions-=r
+"set guioptions-=R
+set go=
+" Screen recording mode
+function! ScreenRecordMode()
+    set columns=86
+    set guifont=Monaco\ 11
+    set cmdheight=1
+    colorscheme molokai_deep
+endfunction
+command! -bang -nargs=0 ScreenRecordMode call ScreenRecordMode()
+"endif
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -982,3 +982,32 @@ nnoremap fd :FufDir<CR>
 nnoremap fm :FufMruFile<CR>
 nnoremap fh :FufHelp<CR>
 nnoremap fl :FufLine<CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => ScreenShell
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+let g:ScreenShellGnuScreenVerticalSupport = 'patch'
+
+nmap <leader>s :ScreenShellVertical<CR>
+nmap <leader>sp :ScreenShellVertical ipython<CR>
+nmap <leader>ss :ScreenSend<CR>
+nmap <leader>sq :ScreenQuit<CR>
+
+function! s:ScreenShellListener()
+    if g:ScreenShellActive
+       nmap <C-c><C-c> :ScreenSend<cr>
+        nmap <C-c><C-x> :ScreenQuit<cr>
+    else
+        nmap <C-c><C-c> :ScreenShell<cr>
+    endif
+endfunction
+
+nmap <C-c><C-c> :ScreenShell<cr>
+augroup ScreenShellEnter
+    autocmd User * call <SID>ScreenShellListener()
+augroup END
+augroup ScreenShellExit
+    autocmd User * call <SID>ScreenShellListener()
+augroup END
