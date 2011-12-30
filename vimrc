@@ -158,7 +158,7 @@ set nomodeline                  " disable mode lines (security measure)
 set cursorline                  " underline the current line, for quick orientation
 
 " Tame the quickfix window (open/close using ,f)
-nmap <silent> <leader>f :QFix<CR>
+"nmap <silent> <leader>f :QFix<CR>
 
 command! -bang -nargs=? QFix call QFixToggle(<bang>0)
 function! QFixToggle(forced)
@@ -975,13 +975,13 @@ let g:syntastic_auto_loc_list=1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <leader>t :FuzzyFinderTextMate<CR>
 let g:fuf_modesDisable = ['mrucmd',]
-nnoremap fb :FufBuffer<CR>
-nnoremap fr :FufFile<CR>
-nnoremap ff :FufCoverageFile<CR>
-nnoremap fd :FufDir<CR>
-nnoremap fm :FufMruFile<CR>
-nnoremap fh :FufHelp<CR>
-nnoremap fl :FufLine<CR>
+nnoremap <leader>fb :FufBuffer<CR>
+nnoremap <leader>fr :FufFile<CR>
+nnoremap <leader>ff :FufCoverageFile<CR>
+nnoremap <leader>fd :FufDir<CR>
+nnoremap <leader>fm :FufMruFile<CR>
+nnoremap <leader>fh :FufHelp<CR>
+nnoremap <leader>fl :FufLine<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -997,14 +997,14 @@ nmap <leader>sq :ScreenQuit<CR>
 
 function! s:ScreenShellListener()
     if g:ScreenShellActive
-       nmap <C-c><C-c> :ScreenSend<cr>
-        nmap <C-c><C-x> :ScreenQuit<cr>
+       map <C-c><C-c> :ScreenSend<cr>
+        map <C-c><C-x> :ScreenQuit<cr>
     else
-        nmap <C-c><C-c> :ScreenShell<cr>
+        map <C-c><C-c> :ScreenShell<cr>
     endif
 endfunction
 
-nmap <C-c><C-c> :ScreenShell<cr>
+map <C-c><C-c> :ScreenShell<cr>
 augroup ScreenShellEnter
     autocmd User * call <SID>ScreenShellListener()
 augroup END
