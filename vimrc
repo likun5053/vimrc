@@ -653,7 +653,7 @@ imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>
 
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
-inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
+""inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
 " <TAB>: completion.
 "inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 " <C-h>, <BS>: close popup and delete backword char.
@@ -988,26 +988,27 @@ nnoremap <leader>fl :FufLine<CR>
 " => ScreenShell
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-let g:ScreenShellGnuScreenVerticalSupport = 'patch'
+"let g:ScreenShellGnuScreenVerticalSupport = 'patch'
 
-nmap <leader>s :ScreenShellVertical<CR>
-nmap <leader>sp :ScreenShellVertical ipython<CR>
-nmap <leader>ss :ScreenSend<CR>
-nmap <leader>sq :ScreenQuit<CR>
+"nmap <leader>s :ScreenShellVertical<CR>
+"nmap <leader>sp :ScreenShellVertical ipython<CR>
+"nmap <leader>ss :ScreenSend<CR>
+"nmap <leader>sq :ScreenQuit<CR>
 
-function! s:ScreenShellListener()
-    if g:ScreenShellActive
-       map <C-c><C-c> :ScreenSend<cr>
-        map <C-c><C-x> :ScreenQuit<cr>
-    else
-        map <C-c><C-c> :ScreenShell<cr>
-    endif
-endfunction
+"function! s:ScreenShellListener()
+    "if g:ScreenShellActive
+       "map <C-c><C-c> :ScreenSend<cr>
+        "map <C-c><C-x> :ScreenQuit<cr>
+    "else
+        "map <C-c><C-c> :ScreenShell<cr>
+    "endif
+"endfunction
 
-map <C-c><C-c> :ScreenShell<cr>
-augroup ScreenShellEnter
-    autocmd User * call <SID>ScreenShellListener()
-augroup END
-augroup ScreenShellExit
-    autocmd User * call <SID>ScreenShellListener()
-augroup END
+"map <C-c><C-c> :ScreenShell<cr>
+"augroup ScreenShellEnter
+    "autocmd User * call <SID>ScreenShellListener()
+"augroup END
+"augroup ScreenShellExit
+    "autocmd User * call <SID>ScreenShellListener()
+"augroup END
+set novisualbell
