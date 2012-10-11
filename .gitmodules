@@ -88,12 +88,6 @@
 [submodule "vim/bundle/vimshell"]
 	path = vim/bundle/vimshell
 	url = git://github.com/Shougo/vimshell.git
-[submodule "vim/bundle/FuzzyFinder"]
-	path = vim/bundle/FuzzyFinder
-	url = git://github.com/vim-scripts/FuzzyFinder.git
-[submodule "vim/bundle/fuzzyfinder_textmate"]
-	path = vim/bundle/fuzzyfinder_textmate
-	url = git://github.com/sethbc/fuzzyfinder_textmate.git
 [submodule "vim/bundle/ZoomWin"]
 	path = vim/bundle/ZoomWin
 	url = git://github.com/vim-scripts/ZoomWin.git
@@ -103,3 +97,6 @@
 [submodule "vim/bundle/vim-session"]
 	path = vim/bundle/vim-session
 	url = git://github.com/xolox/vim-session.git
+[submodule "vim/bundle/ctrlp"]
+	path = vim/bundle/ctrlp
+	url = git://github.com/kien/ctrlp.vim.git

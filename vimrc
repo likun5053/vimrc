@@ -701,10 +701,11 @@ nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => trinity settings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <leader>n :TrinityToggleAll<CR>
-nmap <leader>nl :TrinityToggleNERDTree<CR>
-nmap <leader>nr :TrinityToggleTagList<CR>
+"nmap <leader>n :TrinityToggleAll<CR>
+"nmap <leader>nl :TrinityToggleNERDTree<CR>
+"nmap <leader>nr :TrinityToggleTagList<CR>
 "nmap <leader>nd :TrinityToggleSourceExplorer<CR>
+nmap <leader>nn :NERDTreeToggle<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Filetype specific handling
@@ -973,15 +974,27 @@ let g:syntastic_auto_loc_list=1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => FuzzyFinder
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <leader>t :FuzzyFinderTextMate<CR>
-let g:fuf_modesDisable = ['mrucmd',]
-nnoremap <leader>fb :FufBuffer<CR>
-nnoremap <leader>fr :FufFile<CR>
-nnoremap <leader>ff :FufCoverageFile<CR>
-nnoremap <leader>fd :FufDir<CR>
-nnoremap <leader>fm :FufMruFile<CR>
-nnoremap <leader>fh :FufHelp<CR>
-nnoremap <leader>fl :FufLine<CR>
+"map <leader>t :FuzzyFinderTextMate<CR>
+"let g:fuf_modesDisable = ['mrucmd',]
+"nnoremap <leader>fb :FufBuffer<CR>
+"nnoremap <leader>fr :FufFile<CR>
+"nnoremap <leader>ff :FufCoverageFile<CR>
+"nnoremap <leader>fd :FufDir<CR>
+"nnoremap <leader>fm :FufMruFile<CR>
+"nnoremap <leader>fh :FufHelp<CR>
+"nnoremap <leader>fl :FufLine<CR>
+
+let g:ctrlp_map = '<leader>ff'
+let g:ctrlp_working_path_mode = "ra"
+let g:ctrlp_match_window_bottom = 0
+let g:ctrlp_extensions = ['dir','line', 'changes', 'mixed', 'bookmarkdir']
+nnoremap <leader>fb :CtrlPBuffer<CR>
+nnoremap <leader>fr :CtrlPRoot<CR>
+nnoremap <leader>ff :CtrlP<CR>
+nnoremap <leader>fd :CtrlPDir<CR>   
+nnoremap <leader>fm :CtrlPMRU<CR>
+"nnoremap <leader>fh :FufHelp<CR>
+nnoremap <leader>fl :CtrlPLine<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
