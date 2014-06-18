@@ -27,10 +27,10 @@
 	url = git://github.com/nvie/vim-rst-tables.git
 [submodule "vim/bundle/nerdcommenter"]
 	path = vim/bundle/nerdcommenter
-	url = http://github.com/scrooloose/nerdcommenter.git
+	url = git://github.com/scrooloose/nerdcommenter.git
 [submodule "vim/bundle/gundo"]
 	path = vim/bundle/gundo
-	url = http://github.com/sjl/gundo.vim.git
+	url = git://github.com/sjl/gundo.vim.git
 [submodule "vim/bundle/l9"]
 	path = vim/bundle/l9
 	url = git://github.com/vim-scripts/L9.git
@@ -102,13 +102,16 @@
 	url = git://github.com/vim-scripts/slimv.vim.git
 [submodule "vim/bundle/neosnippet"]
 	path = vim/bundle/neosnippet
-	url = https://github.com/Shougo/neosnippet.vim
+	url = git://github.com/Shougo/neosnippet.vim
 [submodule "vim/bundle/neosnippet-snippets"]
 	path = vim/bundle/neosnippet-snippets
-	url = https://github.com/Shougo/neosnippet-snippets
+	url = git://github.com/Shougo/neosnippet-snippets
 [submodule "vim/bundle/vim-snippets"]
 	path = vim/bundle/vim-snippets
-	url = https://github.com/honza/vim-snippets
+	url = git://github.com/honza/vim-snippets
 [submodule "vim/bundle/vim-powerline"]
 	path = vim/bundle/vim-powerline
-	url = https://github.com/Lokaltog/vim-powerline.git
+	url = git://github.com/Lokaltog/vim-powerline.git
+[submodule "vim/bundle/vim-misc"]
+	path = vim/bundle/vim-misc
+	url = git://github.com/xolox/vim-misc
