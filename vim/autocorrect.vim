@@ -1,3 +1,5 @@
+iab --@ –
+iab ---@ —
 iab abbout about
 iab abotu about
 iab abouta about a
@@ -656,6 +658,7 @@ iab stnad stand
 iab stopry story
 iab stoyr story
 iab stpo stop
+iab stirng string
 iab strentgh strength
 iab stroy story
 iab struggel struggle

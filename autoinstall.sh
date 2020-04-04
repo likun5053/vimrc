@@ -8,31 +8,26 @@ die() {
     exit 1
 }
 
-git clone git://github.com/likun5053/vimrc.git
-cd vimrc
+install_vimrc () {
+    [ -e "$INSTALL_TO/vimrc" ] && die "$INSTALL_TO/vimrc already exists."
+    [ -e "~/.vim" ] && die "~/.vim already exists."
+    [ -e "~/.vimrc" ] && die "~/.vimrc already exists."
 
-INSTALL_DIR=`pwd`
+    cd "$INSTALL_TO"
+    git clone git://github.com/likun5053/vimrc.git
+    cd vimrc
 
-# Download vim plugin bundles
-git submodule init
-git submodule update
+    # Download vim plugin bundles
+    git submodule init
+    git submodule update
 
-git submodule foreach git pull origin master
-if [ -d ~/vimrc ]l;then
-    rm -rf ~/vimrc
-fi
-ln -sf ${INSTALL_DIR} ~/vimrc
+    # Symlink ~/.vim and ~/.vimrc
+    cd ~
+    ln -s "$INSTALL_TO/vimrc/vimrc" .vimrc
+    ln -s "$INSTALL_TO/vimrc/vim" .vim
+    touch ~/.vim/user.vim
 
+    echo "Installed and configured .vim, have fun."
+}
 
-if [ ! -d ~/vimrc/vim/.tmp ];then
-    mkdir vim/.tmp
-fi
-
-touch ~/vimrc/vim/user.vim
-
-echo '
-set runtimepath=~/vimrc/vim,~/vimrc/vim/after,\$VIMRUNTIME
-source ~/vimrc/vimrc
-helptags ~/vimrc/vim/doc'> ~/.vimrc
-
-echo "Installed and configured vim, have fun."
+install_vimrc

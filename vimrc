@@ -22,21 +22,17 @@
 " This must be first, because it changes other options as a side effect.
 set nocompatible
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Pathogen
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Use pathogen to easily modify the runtime path to include all plugins under
-" the ~/vimrc/vim/bundle directory
-filetype off                    " force reloading *after* pathogen loaded
-call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
-filetype plugin indent on       " enable detection, plugins and indenting in one step
+syntax on
+
+" Change shell
+set shell=bash                  " Vim expects a POSIX-compliant shell, which Fish (my default shell) is not
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing behaviour
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Change the mapleader from \ to ,
 let mapleader=","
+let maplocalleader="\\"
 
 set autoread
 set showmode                    " always show what mode we're currently editing in
@@ -74,11 +70,36 @@ set fileformats="unix,dos,mac"
 set formatoptions+=1            " When wrapping paragraphs, don't end lines
 "    with 1-letter words (looks stupid)
 
+set nrformats=                  " make <C-a> and <C-x> play well with
+                                "    zero-padded numbers (i.e. don't consider
+                                "    them octal or hex)
+
+set shortmess+=I                " hide the launch screen
+set clipboard=unnamed           " normal OS clipboard interaction
+set autoread                    " automatically reload files changed outside of Vim
+
+set updatetime=1000             " Speed up the updatetime so gitgutter and friends are quicker
+
+" Make the keyboard faaaaaaast
+set ttyfast
+set timeout timeoutlen=1000 ttimeoutlen=50
+
+" Toggle show/hide invisible chars
+nnoremap <leader>I :set list!<cr>
+
+" Toggle line numbers
+nnoremap <leader>N :setlocal number!<cr>
+
 " Thanks to Steve Losh for this liberating tip
 " See http://stevelosh.com/blog/2010/09/coming-home-to-vim
 nnoremap / /\v
 vnoremap / /\v
 map <C-s> /
+
+" Triggers global-search-and-replace. Prompts for a replacement string and
+" will replace all matches from the previous search command.
+" nnoremap <leader>r :%s//
+nnoremap <leader>r :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>:%s//
 
 " Speed up scrolling of the viewport slightly
 nnoremap <C-e> 2<C-e>
@@ -89,7 +110,7 @@ nnoremap <C-y> 2<C-y>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set foldcolumn=2                " add a fold column
 set foldmethod=marker           " detect triple-{ style fold markers
-set foldlevelstart=0            " start out with everything folded
+set foldlevelstart=99           " start out with everything unfolded
 set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
 " which commands trigger auto-unfold
 function! MyFoldText()
@@ -108,6 +129,15 @@ function! MyFoldText()
     return line . ' …' . repeat(" ",fillcharcount) . foldedlinecount . ' '
 endfunction
 set foldtext=MyFoldText()
+
+" Mappings to easily toggle fold levels
+nnoremap z0 :set foldlevel=0<cr>
+nnoremap z1 :set foldlevel=1<cr>
+nnoremap z2 :set foldlevel=2<cr>
+nnoremap z3 :set foldlevel=3<cr>
+nnoremap z4 :set foldlevel=4<cr>
+nnoremap z5 :set foldlevel=5<cr>
+" }}}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editor layout
@@ -137,6 +167,7 @@ if v:version >= 730
     set undodir=~/vimrc/vim/undo,~/tmp,/tmp
 endif
 set nobackup                    " do not keep backup files, it's 70's style cluttering
+set nowritebackup               " do not write out changes via backup files
 set noswapfile                  " do not write annoying intermediate swap files,
 "    who did ever restore from swap files anyway?
 set directory=~/vimrc/vim/tmp,~/tmp,/tmp
@@ -155,22 +186,49 @@ set showcmd                     " show (partial) command in the last line of the
 "    this also shows visual selection info
 set nomodeline                  " disable mode lines (security measure)
 "set ttyfast                     " always use a fast terminal
-set cursorline                  " underline the current line, for quick orientation
+set nocursorline                " don't highlight the current line (useful for quick orientation, but also slow to redraw)
+" }}}
 
-" Tame the quickfix window (open/close using ,f)
-"nmap <silent> <leader>f :QFix<CR>
+nnoremap <leader>, :set cursorline!<cr>  " toggle highlighting the cursor line
 
-command! -bang -nargs=? QFix call QFixToggle(<bang>0)
-function! QFixToggle(forced)
-    if exists("g:qfix_win") && a:forced == 0
+" Toggle the quickfix window {{{
+" From Steve Losh, http://learnvimscriptthehardway.stevelosh.com/chapters/38.html
+nnoremap <C-q> :call <SID>QuickfixToggle()<cr>
+
+let g:quickfix_is_open = 0
+
+function! s:QuickfixToggle()
+    if g:quickfix_is_open
         cclose
-        unlet g:qfix_win
+        let g:quickfix_is_open = 0
+        execute g:quickfix_return_to_window . "wincmd w"
     else
-        copen 10
-        let g:qfix_win = bufnr("$")
+        let g:quickfix_return_to_window = winnr()
+        copen
+        let g:quickfix_is_open = 1
+    endif
+endfunction
+" }}}
+
+" Toggle the foldcolumn {{{
+nnoremap <leader>f :call FoldColumnToggle()<cr>
+
+let g:last_fold_column_width = 4  " Pick a sane default for the foldcolumn
+
+function! FoldColumnToggle()
+    if &foldcolumn
+        let g:last_fold_column_width = &foldcolumn
+        setlocal foldcolumn=0
+    else
+        let &l:foldcolumn = g:last_fold_column_width
     endif
 endfunction
 
+" Highlighting {{{
+
+if (has("termguicolors"))
+   set termguicolors
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>highlight
@@ -179,32 +237,40 @@ if &t_Co > 2 || has("gui_running")
     syntax on                    " switch syntax highlighting on, when the terminal has colors
 endif
 
+" }}}
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Shortcut mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Since I never use the ; key anyway, this is a real optimization for almost
-" all Vim commands, since we don't have to press that annoying Shift key that
-" slows the commands down
-"nnoremap ; :
+" all Vim commands, as I don't have to press the Shift key to form chords to
+" enter ex mode.
+nnoremap ; :
+nnoremap <leader>; ;
 
 " Avoid accidental hits of <F1> while aiming for <Esc>
-map! <F1> <Esc>
+noremap! <F1> <Esc>
 
-" Quickly close the current window
-nnoremap <leader>q :q<CR>
-nnoremap <leader>qa :qa<CR>
-nnoremap <leader>q! :q!<CR>
-nnoremap <leader>qa! :qa!<CR>
+nnoremap <leader>Q :q<CR>    " Quickly close the current window
+nnoremap <leader>q :bd<CR>   " Quickly close the current buffer
 
 " Use Q for formatting the current paragraph (or visual selection)
-vmap Q gq
-nmap Q gqap
+" This used to be `gq` and `gqap`, but the "w" variant is the same, but puts
+" the cursor back at the original position after performing the
+" transformation. See https://github.com/nvie/vimrc/issues/16
+vnoremap Q gw
+nnoremap Q gwap
+" set breakindent on  " keep paragraph indentation when re-wrapping text
+
+" Sort paragraphs
+vnoremap <leader>s !sort -f<CR>gv
+nnoremap <leader>s vip!sort -f<CR><Esc>
 
 " make p in Visual mode replace the selected text with the yank register
 vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
 
 " Shortcut to make
-nmap mk :make<CR>
+nnoremap mk :make<CR>
 
 " Swap implementations of ` and ' jump to markers
 " By default, ' jumps to the marked line, ` jumps to the marked line and
@@ -213,10 +279,10 @@ nnoremap ' `
 nnoremap ` '
 
 " Use the damn hjkl keys
-" map <up> <nop>
-" map <down> <nop>
-" map <left> <nop>
-" map <right> <nop>
+" noremap <up> <nop>
+" noremap <down> <nop>
+" noremap <left> <nop>
+" noremap <right> <nop>
 
 " Remap j and k to act as expected when used on long, wrapped, lines
 nnoremap j gj
@@ -243,332 +309,70 @@ else
     autocmd! bufwritepost vimrc source ~/vimrc/vimrc
 endif
 " Easy window navigation
-
-""""""""""""""""""""""""""""""
-" => Visual mode related
-""""""""""""""""""""""""""""""
-" NOTICE: Really useful!
-
-"  In visual mode when you press * or # to search for the current selection
-vnoremap <silent> * :call VisualSelection('f')<CR>
-vnoremap <silent> # :call VisualSelection('b')<CR>
-
-" When you press gv you vimgrep after the selected text
-vnoremap <silent> gv :call VisualSelection('gv')<CR>
-
-" Some useful keys for vimgrep
-map <leader>g :vimgrep // **/*.<left><left><left><left><left><left><left>
-map <leader><space> :vimgrep // <C-R>%<C-A><right><right><right><right><right><right><right><right><right>
-
-" When you press <leader>r you can search and replace the selected text
-vnoremap <silent> <leader>r :call VisualSelection('replace')<CR>
-
-"
-" From an idea by Michael Naumann
-"
-function! CmdLine(str)
-    exe "menu Foo.Bar :" . a:str
-    emenu Foo.Bar
-    unmenu Foo
-endfunction
-
-function! VisualSelection(direction) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
-
-    let l:pattern = escape(@", '\\/.*$^~[]')
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
-
-    if a:direction == 'b'
-        execute "normal ?" . l:pattern . "^M"
-    elseif a:direction == 'gv'
-        call CmdLine("vimgrep " . '/'. l:pattern . '/' . ' **/*.')
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    elseif a:direction == 'f'
-        execute "normal /" . l:pattern . "^M"
-    endif
-
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfunction
-
-""""""""""""""""""""""""""""""
-" => Command mode related
-""""""""""""""""""""""""""""""
-" Smart mappings on the command line
-cno $h e ~/
-cno $d c <C-\>eCurrentFileDir("e")<cr>
-cno $j e ./
-cno $c e <C-\>eCurrentFileDir("e")<cr>
-
-" $q is super useful when browsing on the command line
-cno $q <C-\>eDeleteTillSlash()<cr>
-
-:command! -nargs=+ Calc :py print <args>
-:py from math import *
-
-" Command-line mode keymappings:"{{{
-" <C-a>, A: move to head.
-cnoremap <C-a>          <Home>
-" <C-b>: previous char.
-cnoremap <C-b>          <Left>
-" <C-d>: delete char.
-cnoremap <C-d>          <Del>
-" <C-e>, E: move to end.
-cnoremap <C-e>          <End>
-" <C-f>: next char.
-cnoremap <C-f>          <Right>
-" <C-n>: next history.
-cnoremap <C-n>          <Down>
-" <C-p>: previous history.
-cnoremap <C-p>          <Up>
-" <C-k>, K: delete to end.
-cnoremap <C-k> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
-" <C-y>: paste.
-cnoremap <C-y>          <C-r>*
-" <C-s>: view history.
-cnoremap <C-s>          <C-f>
-" <C-l>: view completion list.
-cnoremap <C-l>          <C-d>
-" <A-b>, W: move to previous word.
-cnoremap <A-b>          <S-Left>
-" <A-f>, B: move to next word.
-cnoremap <A-f>          <S-Right>
-cnoremap <S-TAB>        <C-p>
-" <C-g>: decide candidate.
-cnoremap <C-g>          <Space><C-h>
-" <C-t>: insert space.
-cnoremap <C-t>          <Space>
-"}}}
-
-map <C-h> <C-w>h
-map <C-j> <C-w>j
-map <C-k> <C-w>k
-map <C-l> <C-w>l
-
-func! Cwd()
-    let cwd = getcwd()
-    return "e " . cwd
-endfunc
-
-func! DeleteTillSlash()
-    let g:cmd = getcmdline()
-    if MySys() == "linux" || MySys() == "mac"
-        let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*", "\\1", "")
-    else
-        let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\]\\).*", "\\1", "")
-    endif
-    if g:cmd == g:cmd_edited
-        if MySys() == "linux" || MySys() == "mac"
-            let g:cmd_edited = substitute(g:cmd, "\\(.*\[/\]\\).*/", "\\1", "")
-        else
-            let g:cmd_edited = substitute(g:cmd, "\\(.*\[\\\\\]\\).*\[\\\\\]", "\\1", "")
-        endif
-    endif
-    return g:cmd_edited
-endfunc
-
-func! CurrentFileDir(cmd)
-    return a:cmd . " " . expand("%:p:h") . "/"
-endfunc
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Moving around, tabs and buffers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Map space to / (search) and c-space to ? (backgwards search)
-map <space> /
-map <c-space> ?
-map <silent> <leader><cr> :noh<cr>
-
-" Smart way to move btw. windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
-
-map <leader>bb :b#<cr>
-map <C-X>b :b#<cr>
-map <C-X><C-F> :e %:p:h
-
-" Close the current buffer
-map <leader>bd :Bclose<cr>
-
-" Close all the buffers
-map <leader>ba :1,300 bd!<cr>
-
-" Use the arrows to something usefull
-map <right> :bn<cr>
-map <left> :bp<cr>
-
-" Tab configuration
-map <leader>tn :tabnew! %<cr>
-map <leader>te :tabedit
-map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove
-
-" new tab
-nnoremap <C-t>     :tabnew<cr>
-vnoremap <C-t>     <C-C>:tabnew<cr>
-inoremap <C-t>     <C-C>:tabnew<cr>
-"tab left
-"nnoremap <C-h>     :tabprevious<cr>
-"vnoremap <C-h>     <C-C>:tabprevious<cr>
-"inoremap <C-h>     <C-O>:tabprevious<cr>
-"nnoremap <C-S-tab> :tabprevious<cr>
-"vnoremap <C-S-tab> <C-C>:tabprevious<cr>
-"inoremap <C-S-tab> <C-O>:tabprevious<cr>
-"tab right
-"nnoremap <C-l>     :tabnext<cr>
-"vnoremap <C-l>     <C-C>:tabnext<cr>
-"inoremap <C-l>     <C-O>:tabnext<cr>
-"nnoremap <C-tab>   :tabnext<cr>
-"vnoremap <C-tab>   <C-C>:tabnext<cr>
-"inoremap <C-tab>   <C-O>:tabnext<cr>
-"tab indexes
-noremap <A-1> 1gt
-noremap <A-2> 2gt
-noremap <A-3> 3gt
-noremap <A-4> 4gt
-noremap <A-5> 5gt
-noremap <A-6> 6gt
-noremap <A-7> 7gt
-noremap <A-8> 8gt
-noremap <A-9> 9gt
-noremap <A-0> 10gt
-
-" When pressing <leader>cd switch to the directory of the open buffer
-map <leader>cd :cd %:p:h<cr>
-
-
-command! Bclose call <SID>BufcloseCloseIt()
-function! <SID>BufcloseCloseIt()
-    let l:currentBufNum = bufnr("%")
-    let l:alternateBufNum = bufnr("#")
-
-    if buflisted(l:alternateBufNum)
-        buffer #
-    else
-        bnext
-    endif
-
-    if bufnr("%") == l:currentBufNum
-        new
-    endif
-
-    if buflisted(l:currentBufNum)
-        execute("bdelete! ".l:currentBufNum)
-    endif
-endfunction
-
-" Specify the behavior when switching between buffers
-try
-    set switchbuf=usetab
-    set stal=2
-catch
-endtry
-
-
-""""""""""""""""""""""""""""""
-" => Parenthesis/bracket expanding
-""""""""""""""""""""""""""""""
-vnoremap $1 <esc>`>a)<esc>`<i(<esc>
-vnoremap $2 <esc>`>a]<esc>`<i[<esc>
-vnoremap $3 <esc>`>a}<esc>`<i{<esc>
-vnoremap $$ <esc>`>a"<esc>`<i"<esc>
-vnoremap $q <esc>`>a'<esc>`<i'<esc>
-vnoremap $e <esc>`>a"<esc>`<i"<esc>
-
-" Map auto complete of (, ", ', [
-inoremap $1 ()<esc>i
-inoremap $2 []<esc>i
-inoremap $3 {}<esc>i
-inoremap $4 {<esc>o}<esc>O
-inoremap $q ''<esc>i
-inoremap $e ""<esc>i
-inoremap $t <><esc>i
-
-
-""""""""""""""""""""""""""""""
-" => General Abbrevs
-""""""""""""""""""""""""""""""
-iab xdate <c-r>=strftime("%Y-%m-%d %H:%M:%S")<cr>
-
-""""""""""""""""""""""""""""""
-" => Editing mapping
-""""""""""""""""""""""""""""""
-map 0 ^
-
-"Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
-
-if MySys() == "mac"
-    nmap <D-j> <M-j>
-    nmap <D-k> <M-k>
-    vmap <D-j> <M-j>
-    vmap <D-k> <M-k>
-endif
-
-"Delete trailing white space, useful for Python ;)
-func! DeleteTrailingWS()
-    exe "normal mz"
-    %s/\s\+$//ge
-    exe "normal `z"
-endfunc
-autocmd BufWrite *.py :call DeleteTrailingWS()
-
-set guitablabel=%t
-
+noremap <C-h> <C-w>h
+noremap <C-j> <C-w>j
+noremap <C-k> <C-w>k
+noremap <C-l> <C-w>l
+" nnoremap <leader>w <C-w>v<C-w>l
 
 " Complete whole filenames/lines with a quicker shortcut key in insert mode
-imap <C-f> <C-x><C-f>
-imap <C-l> <C-x><C-l>
+inoremap <C-f> <C-x><C-f>
+inoremap <C-l> <C-x><C-l>
 
 " Use ,d (or ,dd or ,dj or 20,dd) to delete a line without adding it to the
 " yanked stack (also, in visual mode)
-nmap <silent> <leader>d "_d
-vmap <silent> <leader>d "_d
+nnoremap <silent> <leader>d "_d
+vnoremap <silent> <leader>d "_d
+" vnoremap <silent> x "_x  TODODODOOo
 
 " Quick yanking to the end of the line
-nmap Y y$
+nnoremap Y y$
 
-" Yank/paste to the OS clipboard with ,y and ,p
-nmap <leader>y "+y
-nmap <leader>Y "+yy
-nmap <leader>p "+p
-nmap <leader>P "+P
+" YankRing stuff
+let g:yankring_history_dir = '$HOME/.vim/.tmp'
 
-" YankRing stuff                           //
-let g:yankring_history_dir = '~/vimrc/vim/.tmp'
-nmap <leader>r :YRShow<CR>
-
+" Edit the vimrc file
+nnoremap <silent> <leader>ev :e $MYVIMRC<CR>
+nnoremap <silent> <leader>sv :so $MYVIMRC<CR>
 
 " Clears the search register
-nmap <silent> <leader>/ :nohlsearch<CR>
+nnoremap <silent> <leader>/ :nohlsearch<CR>
+
+" Pull word under cursor into LHS of a substitute (for quick search and
+" replace)
+nnoremap <leader>z :%s#\<<C-r>=expand("<cword>")<CR>\>#
+
+" Keep search matches in the middle of the window and pulse the line when moving
+" to them.
+nnoremap n n:call PulseCursorLine()<cr>
+nnoremap N N:call PulseCursorLine()<cr>
 
 " Quickly get out of insert mode without your fingers having to leave the
 " home row (either use 'jj' or 'jk')
 inoremap jj <Esc>
-inoremap jk <Esc>
 
 " Quick alignment of text
-nmap <leader>al :left<CR>
-nmap <leader>ar :right<CR>
-nmap <leader>ac :center<CR>
-
-" Pull word under cursor into LHS of a substitute (for quick search and
-" replace)
-nmap <leader>z :%s#\<<C-r>=expand("<cword>")<CR>\>#
-
-" Scratch
-nmap <leader><tab> :Sscratch<CR><C-W>x<C-J>
+" nnoremap <leader>al :left<CR>
+" nnoremap <leader>ar :right<CR>
+" nnoremap <leader>ac :center<CR>
 
 " Sudo to write
-cmap w!! w !sudo tee % >/dev/null
+cnoremap w!! w !sudo tee % >/dev/null
+
+" Ctrl+W to redraw the buffer's contents
+"
+" For some reason unclear to me, new files opened via the quickfix window
+" (for example Flow errors triggered in unopened files) don't get
+" their file types detected automatically.  For these new buffers, the
+" filetype= (empty).
+"
+" This can be fixed by running
+"
+"     :filetype detect
+"
+" In those buffers, but this is super laborious.  This just plugs that
+" under my existing "refresh the screen" shortcut <c-w>.
+nnoremap <C-w> :filetype detect<cr>:redraw!<cr>
 
 " Jump to matching pairs easily, with Tab
 nnoremap <Tab> %
@@ -578,161 +382,88 @@ vnoremap <Tab> %
 nnoremap <Space> za
 vnoremap <Space> za
 
-" Strip all trailing whitespace from a file, using ,w
+" Strip all trailing whitespace from a file, using ,W
 nnoremap <leader>W :%s/\s\+$//<CR>:let @/=''<CR>
 
-" Run Ack fast
-nnoremap <leader>a :Ack<Space>
+" Use The Silver Searcher over grep, iff possible
+if executable('ag')
+   " Use ag over grep
+   set grepprg=ag\ --nogroup\ --nocolor
+endif
+
+" grep/Ack/Ag for the word under cursor
+" vnoremap <leader>a y:grep! "\b<c-r>"\b"<cr>:cw<cr>
+" nnoremap <leader>a :grep! "\b<c-r><c-w>\b"
+vnoremap <leader>a y:Ag <c-r><cr>:cw<cr>
+nnoremap <leader>a :Ag <c-r><c-w>
+nnoremap K *N:grep! "\b<c-r><c-w>\b"<cr>:cw<cr>
+
+" Allow quick additions to the spelling dict
+nnoremap <leader>g :spellgood <c-r><c-w>
+
+" Define "Ag" command
+command -nargs=+ -complete=file -bar Ag silent! grep! <args> | cwindow | redraw!
+
+" bind \ (backward slash) to grep shortcut
+nnoremap \ :Ag<SPACE>
 
 " Creating folds for tags in HTML
 "nnoremap <leader>ft Vatzf
 
 " Reselect text that was just pasted with ,v
 nnoremap <leader>v V`]
-
-" Gundo.vim
-nnoremap <F5> :GundoToggle<CR>
 " }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Spell checking
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
+" NERDTree settings {{{
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <leader>m :NERDTreeClose<CR>:NERDTreeFind<CR>
+nnoremap <leader>N :NERDTreeClose<CR>
 
-"Shortcuts using <leader>
-map <leader>sn ]s
-map <leader>sp [s
-map <leader>sa zg
-map <leader>s? z=
+" Store the bookmarks file
+let NERDTreeBookmarksFile=expand("$HOME/.vim/NERDTreeBookmarks")
 
-let g:session_autosave="no"
+" Show the bookmarks table on startup
+let NERDTreeShowBookmarks=1
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Neocomplcache config
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"Disable AutoComplPop.
-let g:acp_enableAtStartup = 0
-" Use neocomplcache.
-let g:neocomplcache_enable_at_startup = 1
-" Use smartcase.
-let g:neocomplcache_enable_smart_case = 1
-" Set minimum syntax keyword length.
-let g:neocomplcache_min_syntax_length = 3
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+" Show hidden files, too
+let NERDTreeShowFiles=1
+let NERDTreeShowHidden=1
 
-" Enable heavy features.
-" Use camel case completion.
-"let g:neocomplcache_enable_camel_case_completion = 1
-" Use underbar completion.
-"let g:neocomplcache_enable_underbar_completion = 1
+" Quit on opening files from the tree
+let NERDTreeQuitOnOpen=1
 
-" Define dictionary.
-let g:neocomplcache_dictionary_filetype_lists = {
-    \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
-        \ }
+" Highlight the selected entry in the tree
+let NERDTreeHighlightCursorline=1
 
-" Define keyword.
-if !exists('g:neocomplcache_keyword_patterns')
-    let g:neocomplcache_keyword_patterns = {}
-endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+" Use a single click to fold/unfold directories and a double click to open
+" files
+let NERDTreeMouseMode=2
 
-" Plugin key-mappings.
-inoremap <expr><C-g>     neocomplcache#undo_completion()
-inoremap <expr><C-l>     neocomplcache#complete_common_string()
+" Don't display these kinds of files
+let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.py\$class$', '\.obj$',
+            \ '\.o$', '\.so$', '\.egg$', '^\.git$', '__pycache__', '\.DS_Store' ]
 
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return neocomplcache#smart_close_popup() . "\<CR>"
-  " For no inserting <CR> key.
-  "return pumvisible() ? neocomplcache#close_popup() : "\<CR>"
-endfunction
-" <TAB>: completion.
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplcache#close_popup()
-inoremap <expr><C-e>  neocomplcache#cancel_popup()
-" Close popup by <Space>.
-"inoremap <expr><Space> pumvisible() ? neocomplcache#close_popup() : "\<Space>"
+" }}}
 
-" For cursor moving in insert mode(Not recommended)
-"inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
-"inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
-"inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
-"inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
-" Or set this.
-"let g:neocomplcache_enable_cursor_hold_i = 1
-" Or set this.
-"let g:neocomplcache_enable_insert_char_pre = 1
+" vim-sort-imports config (import-sort fixer) {{{
 
-" AutoComplPop like behavior.
-"let g:neocomplcache_enable_auto_select = 1
-
-" Shell like behavior(not recommended).
-"set completeopt+=longest
-"let g:neocomplcache_enable_auto_select = 1
-"let g:neocomplcache_disable_auto_complete = 1
-"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
-
-" Enable omni completion.
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-
-" Enable heavy omni completion.
-if !exists('g:neocomplcache_omni_patterns')
-  let g:neocomplcache_omni_patterns = {}
-endif
-let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplcache_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplcache_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-
-" For perlomni.vim setting.
-" https://github.com/c9s/perlomni.vim
-let g:neocomplcache_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
-
-
-" Plugin key-mappings.
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
-
-" SuperTab like snippets behavior.
-imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)"
-\: pumvisible() ? "\<C-n>" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-\ "\<Plug>(neosnippet_expand_or_jump)"
-\: "\<TAB>"
-
-" For snippet_complete marker.
-if has('conceal')
-  set conceallevel=2 concealcursor=i
-endif
-
- " Enable snipMate compatibility feature.
-let g:neosnippet#enable_snipmate_compatibility = 1
+" TODO: Ideally, this command would be run as an ALE fixer, so we can get rid
+" of the vim-sort-imports plugin.
+let g:import_sort_auto = 0
 
 " Tell Neosnippet about the other snippets
 let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Conflict markers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" vim-flake8 default configuration
+let g:flake8_show_in_gutter=0
+
+" Conflict markers {{{
 " highlight conflict markers
-match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+match ErrorMsg '\v^[<\|=|>]{7}([^=].+)?$'
 
 " shortcut to jump to next conflict marker
-nmap <silent> <leader>c /^\(<\\|=\\|>\)\{7\}\([^=].\+\)\?$<CR>
+nnoremap <silent> <leader>c /\v^[<\|=>]{7}([^=].+)?$<CR>
+" }}}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => trinity settings
@@ -786,13 +517,10 @@ if has("autocmd")
             set ft=html
         endfun
 
-        autocmd BufNewFile,BufRead *.django,*.html,*.htm call s:DetectHTMLVariant()
+        " Auto-tidy selection
+        vnoremap <leader>x :!tidy -q -i --show-errors 0 --show-body-only 1 --wrap 0<cr><cr>
 
-        " Auto-closing of HTML/XML tags
-        let g:closetag_default_xml=1
-        autocmd filetype html,htmldjango let b:closetag_html_style=1
-
-        autocmd filetype html,xhtml,xml source ~/vimrc/vim/scripts/closetag.vim
+        autocmd BufNewFile,BufRead *.html,*.htm,*.j2 call s:DetectHTMLVariant()
     augroup end " }}}
 
     augroup python_files "{{{
@@ -819,9 +547,8 @@ if has("autocmd")
 
         " PEP8 compliance (set 1 tab = 4 chars explicitly, even if set
         " earlier, as it is important)
-        autocmd filetype python setlocal expandtab shiftwidth=4 tabstop=4 softtabstop=4
-        autocmd filetype python setlocal textwidth=80
-        "autocmd filetype python match ErrorMsg '\%>80v.\+'
+        autocmd filetype python setlocal textwidth=78
+        autocmd filetype python match ErrorMsg '\%>120v.\+'
 
         " But disable autowrapping as it is super annoying
         autocmd filetype python setlocal formatoptions-=t
@@ -831,19 +558,58 @@ if has("autocmd")
         "autocmd filetype python setlocal foldmethod=expr
 
         " Python runners
-        autocmd filetype python map <buffer> <F5> :w<CR>:!python %<CR>
-        autocmd filetype python imap <buffer> <F5> <Esc>:w<CR>:!python %<CR>
-        autocmd filetype python map <buffer> <S-F5> :w<CR>:!ipython %<CR>
-        autocmd filetype python imap <buffer> <S-F5> <Esc>:w<CR>:!ipython %<CR>
+        autocmd filetype python noremap <buffer> <F5> :w<CR>:!python %<CR>
+        autocmd filetype python inoremap <buffer> <F5> <Esc>:w<CR>:!python %<CR>
+        autocmd filetype python noremap <buffer> <S-F5> :w<CR>:!ipython %<CR>
+        autocmd filetype python inoremap <buffer> <S-F5> <Esc>:w<CR>:!ipython %<CR>
+
+        " Automatic insertion of breakpoints
+        autocmd filetype python nnoremap <buffer> <leader>bp :normal oimport pdb; pdb.set_trace()  # TODO: BREAKPOINT  # noqa<Esc>
 
         " Run a quick static syntax check every time we save a Python file
-        "autocmd BufWritePost *.py call Pyflakes()
+        " autocmd BufWritePost *.py call Flake8()
+
+        " Defer to isort for sorting Python imports (instead of using Unix sort)
+        autocmd filetype python nnoremap <leader>s mX:%!isort -<cr>`X:redraw!<cr>
+    augroup end " }}}
+
+    augroup js_files "{{{
+        au!
+
+        autocmd filetype javascript setlocal foldmethod=syntax
+
+        " Defer to import-sort for sorting JavaScript imports (instead of using Unix sort)
+        " autocmd filetype javascript nnoremap <leader>s :StopAutoSortImport<cr>:w<cr>:SortImport<cr>:StartAutoSortImport<cr>
+        autocmd filetype javascript nnoremap <leader>s :write<cr>
+
+    augroup end " }}}
+
+    augroup clojure_files "{{{
+        au!
+
+        " Set up <leader>r to run the entire file with vim-fireplace
+        autocmd filetype clojure nnoremap <leader>r :%Eval<cr>
+        autocmd filetype clojure RainbowParenthesesActivate
+        autocmd filetype clojure RainbowParenthesesLoadRound
+        autocmd filetype clojure RainbowParenthesesLoadSquare
+        autocmd filetype clojure RainbowParenthesesLoadBraces
+    augroup end " }}}
+
+    augroup supervisord_files "{{{
+        au!
+
+        autocmd BufNewFile,BufRead supervisord.conf set ft=dosini
+    augroup end " }}}
+
+    augroup markdown_files "{{{
+        au!
+
+        autocmd filetype markdown noremap <buffer> <leader>p :w<CR>:!open -a 'Marked 2' %<CR><CR>
     augroup end " }}}
 
     augroup ruby_files "{{{
         au!
 
-        autocmd filetype ruby setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
     augroup end " }}}
 
     augroup rst_files "{{{
@@ -867,6 +633,10 @@ if has("autocmd")
         autocmd filetype javascript setlocal expandtab
         autocmd filetype javascript setlocal listchars=trail:·,extends:#,nbsp:·
         autocmd filetype javascript setlocal foldmethod=marker foldmarker={,}
+
+        " Enable insertion of "debugger" statement in JS files
+        autocmd filetype javascript nnoremap <leader>b Odebugger; // eslint-disable-line<esc>
+
     augroup end "}}}
 
     augroup textile_files "{{{
@@ -878,31 +648,23 @@ if has("autocmd")
         autocmd filetype textile syntax region frontmatter start=/\%^---$/ end=/^---$/
         autocmd filetype textile highlight link frontmatter Comment
     augroup end "}}}
+
+    augroup git_files "{{{
+        au!
+
+        " Don't remember the last cursor position when editing commit
+        " messages, always start on line 1
+        autocmd filetype gitcommit call setpos('.', [0, 1, 1, 0])
+    augroup end "}}}
 endif
+" }}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Skeleton processing
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if has("autocmd")
-
-    "    if !exists('*LoadTemplate')
-    "    function LoadTemplate(file)
-    " Add skeleton fillings for Python (normal and unittest) files
-    "        if a:file =~ 'test_.*\.py$'
-    "            execute "0r ~/vimrc/vim/skeleton/test_template.py"
-    "        elseif a:file =~ '.*\.py$'
-    "            execute "0r ~/vimrc/vim/skeleton/template.py"
-    "        endif
-    "    endfunction
-    "    endif
-
-endif " has("autocmd")
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Restore cursor position upon reopening files
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+" Restore cursor position upon reopening files {{{
+autocmd BufReadPost *
+    \ if &filetype != "gitcommit" && line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+" }}}
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Common abbreviations / misspellings
@@ -917,13 +679,11 @@ set cpoptions+=$     " when changing a line, don't redisplay, but put a '$' at
 " the end during the change
 set formatoptions-=o " don't start new lines w/ comment leader on pressing 'o'
 au filetype vim set formatoptions-=o
-" somehow, during vim filetype detection, this gets set
-" for vim files, so explicitly unset it again
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Extra user or machine specific settings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-source ~/vimrc/vim/user.vim
+                     " somehow, during vim filetype detection, this gets set
+                     " for vim files, so explicitly unset it again
+au filetype crontab setlocal backupcopy=yes
+                     " editing crontab files needs to happen in-place
+" }}}
 
 " Creating underline/overline headings for markup languages
 " Inspired by http://sphinx.pocoo.org/rest.html#sections
@@ -938,135 +698,351 @@ iab lorem Lorem ipsum dolor sit amet, consectetur adipiscing elit
 iab llorem Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu.  Nulla non quam erat, luctus consequat nisi
 iab lllorem Lorem ipsum dolor sit amet, consectetur adipiscing elit.  Etiam lacus ligula, accumsan id imperdiet rhoncus, dapibus vitae arcu.  Nulla non quam erat, luctus consequat nisi.  Integer hendrerit lacus sagittis erat fermentum tincidunt.  Cras vel dui neque.  In sagittis commodo luctus.  Mauris non metus dolor, ut suscipit dui.  Aliquam mauris lacus, laoreet et consequat quis, bibendum id ipsum.  Donec gravida, diam id imperdiet cursus, nunc nisl bibendum sapien, eget tempor neque elit in tortor
 
-"if has("gui_running")
-if has('mac')
-    set guifont=Monaco:h13
+" Smart-quote a paragraph
+vnoremap ' :s/'/’/<cr>
+
+"set guifont=Anonymous\ for\ Powerline:h12 linespace=2
+"set guifont=Droid\ Sans\ Mono:h14 linespace=0
+"set guifont=Mensch\ for\ Powerline:h14 linespace=0
+"set guifont=saxMono:h14 linespace=3
+"set guifont=Ubuntu\ Mono:h18 linespace=3
+set guifont=Source\ Code\ Pro\ Light:h10 linespace=0
+
+if has("gui_running")
+    " Remove toolbar, left scrollbar and right scrollbar
+    set guioptions-=T
+    set guioptions-=l
+    set guioptions-=L
+    set guioptions-=r
+    set guioptions-=R
+    set guifont=Source\ Code\ Pro\ Light:h13 linespace=0
 else
-    set guifont=Monaco\ 10
+    set bg=dark
 endif
-"colorscheme baycomb
-"colorscheme mustang
-colorscheme molokai
 
-" Remove toolbar, left scrollbar and right scrollbar
-"set guioptions-=T
-"set guioptions-=l                          G
-"set guioptions-=L
-"set guioptions-=r
-"set guioptions-=R
-set go=
-" Screen recording mode
-function! ScreenRecordMode()
-    set columns=86
-    if has('mac')
-        set guifont=Monaco:h13
-    else
-        set guifont=Monaco\ 11
-    endif
-    set cmdheight=1
-    colorscheme molokai_deep
+colorscheme OceanicNext
+
+" Pulse ------------------------------------------------------------------- {{{
+
+function! PulseCursorLine()
+    setlocal cursorline
+
+    redir => old_hi
+        silent execute 'hi CursorLine'
+    redir END
+    let old_hi = split(old_hi, '\n')[0]
+    let old_hi = substitute(old_hi, 'xxx', '', '')
+
+    hi CursorLine guibg=#3a3a3a
+    redraw
+    sleep 14m
+
+    hi CursorLine guibg=#4a4a4a
+    redraw
+    sleep 10m
+
+    hi CursorLine guibg=#3a3a3a
+    redraw
+    sleep 14m
+
+    hi CursorLine guibg=#2a2a2a
+    redraw
+    sleep 10m
+
+    execute 'hi ' . old_hi
+    setlocal nocursorline
 endfunction
-command! -bang -nargs=0 ScreenRecordMode call ScreenRecordMode()
+
+" }}}
+
+" Powerline configuration ------------------------------------------------- {{{
+
+let g:Powerline_symbols = 'compatible'
+"let g:Powerline_symbols = 'fancy'
+
+" }}}
+
+" Python mode configuration ----------------------------------------------- {{{
+
+" Don't run pylint on every save
+let g:pymode = 1
+let g:pymode_breakpoint = 0
+let g:pymode_breakpoint_bind = '<leader>b'
+let g:pymode_doc = 0
+let g:pymode_doc_bind = 'K'
+let g:pymode_folding = 0
+let g:pymode_indent = 0
+let g:pymode_lint = 0
+let g:pymode_lint_checkers = ['pyflakes', 'pep8', 'mccabe']
+let g:pymode_lint_cwindow = 1
+let g:pymode_lint_ignore = ''
+let g:pymode_lint_message = 1
+let g:pymode_lint_on_fly = 0
+let g:pymode_lint_on_write = 0
+let g:pymode_lint_select = ''
+let g:pymode_lint_signs = 1
+let g:pymode_motion = 0
+let g:pymode_options = 0
+let g:pymode_paths = []
+let g:pymode_quickfix_maxheight = 6
+let g:pymode_quickfix_minheight = 3
+let g:pymode_rope = 1
+let g:pymode_rope_completion = 0
+let g:pymode_rope_regenerate_on_write = 0
+let g:pymode_run = 0
+let g:pymode_run_bind = '<leader>r'
+let g:pymode_trim_whitespaces = 0
+
+" }}}
+
+" JavaScript configuration ------------------------------------------------ {{{
+
+let g:javascript_plugin_jsdoc = 0
+let g:javascript_plugin_flow = 1
+
+" See https://github.com/elzr/vim-json#specific-customizations
+let g:vim_json_syntax_conceal = 0
+
+" }}}
+
+" fzf config -------------------------------------------------------------- {{{
+
+" Invoke fzf, but CommandT style
+nnoremap <leader>t :Files<cr>
+nnoremap <leader>. :Tags<cr>
+nnoremap <leader>b :Buffers<cr>
+
+" ------------------------------------------------------------------------- }}}
+
+" Learn Vim Script the Hard Way Exercises
+"noremap - ddp
+"noremap _ ddkP
+
+" C-U in insert/normal mode, to uppercase the word under cursor
+inoremap <c-u> <esc>viwUea
+nnoremap <c-u> viwUe
+
+" Quote words under cursor
+nnoremap <leader>" viW<esc>a"<esc>gvo<esc>i"<esc>gvo<esc>3l
+nnoremap <leader>' viW<esc>a'<esc>gvo<esc>i'<esc>gvo<esc>3l
+
+" Quote current selection
+" TODO: This only works for selections that are created "forwardly"
+vnoremap <leader>" <esc>a"<esc>gvo<esc>i"<esc>gvo<esc>ll
+vnoremap <leader>' <esc>a'<esc>gvo<esc>i'<esc>gvo<esc>ll
+
+" Use shift-H and shift-L for move to beginning/end
+nnoremap H 0
+nnoremap L $
+
+" Define operator-pending mappings to quickly apply commands to function names
+" and/or parameter lists in the current line
+onoremap inf :<c-u>normal! 0f(hviw<cr>
+onoremap anf :<c-u>normal! 0f(hvaw<cr>
+onoremap in( :<c-u>normal! 0f(vi(<cr>
+onoremap an( :<c-u>normal! 0f(va(<cr>
+
+" "Next" tag
+onoremap int :<c-u>normal! 0f<vit<cr>
+onoremap ant :<c-u>normal! 0f<vat<cr>
+
+" Function argument selection (change "around argument", change "inside argument")
+onoremap ia :<c-u>execute "normal! ?[,(]\rwv/[),]\rh"<cr>
+vnoremap ia :<c-u>execute "normal! ?[,(]\rwv/[),]\rh"<cr>
+
+" Split previously opened file ('#') in a split window
+nnoremap <leader>sh :execute "leftabove vsplit" bufname('#')<cr>
+nnoremap <leader>sl :execute "rightbelow vsplit" bufname('#')<cr>
+
+" Grep searches
+"nnoremap <leader>g :silent execute "grep! -R " . shellescape('<cword>') . " ."<cr>:copen 12<cr>
+"nnoremap <leader>G :silent execute "grep! -R " . shellescape('<cWORD>') . " ."<cr>:copen 12<cr>
+
+" Rope config
+nnoremap <leader>A :RopeAutoImport<cr>
+
+" Switch from block-cursor to vertical-line-cursor when going into/out of
+" insert mode
+let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+
+" Configure vim-expand-region, for easy selection precision {{{
+
+vmap v <Plug>(expand_region_expand)
+vmap <C-v> <Plug>(expand_region_shrink)
+
+let g:expand_region_text_objects = {
+   \ 'iw'  : 0,
+   \ 'i"'  : 1,
+   \ 'i''' : 1,
+   \ 'a"'  : 0,
+   \ 'a''' : 0,
+   \ 'i)'  : 1,
+   \ 'i}'  : 1,
+   \ 'i]'  : 1,
+   \ 'a)'  : 1,
+   \ 'a}'  : 1,
+   \ 'a]'  : 1,
+   \ }
+
+" }}}
+
+" Configure ArgWrap
+let g:argwrap_tail_comma = 1
+nnoremap <leader>w :ArgWrap<cr>
+
+" ALE config {{{
+
+" let g:ale_enabled = 1
+let g:ale_completion_enabled = 0
+let g:ale_lint_delay = 200   " millisecs
+" let g:ale_lint_on_text_changed = 'always'  " never/insert/normal/always
+let g:ale_lint_on_enter = 1
+let g:ale_lint_on_filetype_changed = 1
+let g:ale_lint_on_save = 1
+let g:ale_fix_on_save = 1
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+" let g:ale_open_list = 1
+
+" TODO: Temporary hack until our eslint is configured correctly
+let g:ale_javascript_eslint_options = '--rulesdir eslint --no-ignore'
+
+let g:ale_linters = {
+\   'graphql': ['eslint', 'flow'],
+\   'javascript.jsx': ['eslint', 'flow'],
+\   'javascript': ['eslint', 'flow'],
+\   'typescript': ['typescript'],
+\}
+let g:ale_fixers = {
+\   'graphql': ['eslint', 'prettier'],
+\   'javascript.jsx': ['eslint', 'prettier'],
+\   'javascript': ['eslint', 'prettier'],
+\   'typescript': ['eslint', 'prettier'],
+\}
+
+" nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+" nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
+" }}}
+
+" {{{ Check JS with Flow
+
+" Uncomment this if it gets annoying
+" let g:asyncomplete_auto_popup = 0
+" let g:asyncomplete_remove_duplicates = 1
+
+" Tab completion for vim-lsp
+" inoremap <expr> <tab> pumvisible() ? "\<c-n>" : "\<tab>"
+"inoremap <tab> <c-n>
+"inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
+"inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<cr>"
+"set completeopt=menu,longest,preview
+
+" Force refresh completion
+"imap <s-space> <Plug>(asyncomplete_force_refresh)
+
+" vim-lsp configuration for IDE-like Flow help
+" See https://github.com/prabirshrestha/vim-lsp/wiki/Servers-Flow
+"if executable('flow-language-server')
+"   nnoremap gd :LspDefinition<cr>
+"   nnoremap <leader>i :LspHover<cr>
+"   autocmd FileType javascript setlocal omnifunc=lsp#complete
+"   autocmd FileType javascript.jsx setlocal omnifunc=lsp#complete
+"
+"   au User lsp_setup call lsp#register_server({
+"      \ 'name': 'flow-language-server',
+"      \ 'cmd': {server_info->[&shell, &shellcmdflag, 'flow-language-server --stdio']},
+"      \ 'root_uri':{server_info->lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), '.flowconfig'))},
+"      \ 'whitelist': ['javascript', 'javascript.jsx'],
+"      \ })
 "endif
 
+" }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => VimClojure
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let vimclojure#HighlightBuiltins=1
-let vimclojure#HighlightContrib=1
-let vimclojure#DynamicHighlighting=1
-let vimclojure#ParenRainbow=1
-let vimclojure#WantNailgun = 1
-let vimclojure#NailgunClient = "~/vimrc/vim/bundle/vimClojureLib/vimclojure-nailgun-client/ng"
+" {{{ Check JS with Flow (vim-lsc)
+
+" inoremap <expr> <tab> pumvisible() ? "\<c-n>" : "\<tab>"
+inoremap <tab> <c-n>
+inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
+inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<cr>"
+
+let g:lsc_server_commands = {
+   \ 'javascript': 'flow lsp',
+   \ }
+
+" Use all the defaults (recommended)
+let g:lsc_auto_map = {
+ \  'GoToDefinition': 'gd',
+ \  'FindReferences': 'gr',
+ \  'Rename': 'gR',
+ \  'ShowHover': '<leader>i',
+ \  'Completion': 'omnifunc',
+ \}
+
+let g:lsc_preview_split_direction = 'below'
+let g:lsc_enable_autocomplete  = v:true
+let b:vcm_tab_complete = "omni"
+
+" Apply the defaults with a few overrides:
+"let g:lsc_auto_map = {'defaults': v:true, 'FindReferences': '<leader>r'}
+
+" Setting a value to a blank string leaves that command unmapped:
+"let g:lsc_auto_map = {'defaults': v:true, 'FindImplementations': ''}
+
+" ... or set only the commands you want mapped without defaults.
+" Complete default mappings are:
+"let g:lsc_auto_map = {
+"   \ 'GoToDefinition': '<C-]>',
+"   \ 'GoToDefinitionSplit': ['<C-W>]', '<C-W><C-]>'],
+"   \ 'FindReferences': 'gr',
+"   \ 'NextReference': '<C-n>',
+"   \ 'PreviousReference': '<C-p>',
+"   \ 'FindImplementations': 'gI',
+"   \ 'FindCodeActions': 'ga',
+"   \ 'Rename': 'gR',
+"   \ 'ShowHover': v:true,
+"   \ 'DocumentSymbol': 'go',
+"   \ 'WorkspaceSymbol': 'gS',
+"   \ 'SignatureHelp': 'gm',
+"   \ 'Completion': 'completefunc',
+"   \}
+
+" }}}
+
+" Elm!
+let g:elm_format_autosave = 1
+
+" Switch.vim! {{{
+
+let g:switch_mapping = "!"
+let g:switch_custom_definitions =
+  \ [
+  \   {
+  \     'x\(\d\*\)\?': 'y\1',
+  \     'y\(\d\*\)\?': 'x\1',
+  \   },
+  \   ['width', 'height'],
+  \ ]
+
+autocmd FileType gitrebase let b:switch_custom_definitions =
+   \ [
+   \   ['pick', 'fixup', 'squash', 'reword', 'edit', 'exec']
+   \ ]
+
+" }}}
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => tabular
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" idea from  http://vimcasts.org/episodes/aligning-text-with-tabular-vim
+" Helper to display the current syntax highlighting group under cursor {{{
 
-" temp diabled for conflicts
-"if exists(":Tabularize")
-  "nmap <Leader>a= :Tabularize /=<CR>
-  "vmap <Leader>a= :Tabularize /=<CR>
-  "nmap <Leader>a: :Tabularize /:\zs<CR>
-  "vmap <Leader>a: :Tabularize /:\zs<CR>
-"endif
+function! SynStack ()
+    for i1 in synstack(line("."), col("."))
+        let i2 = synIDtrans(i1)
+        let n1 = synIDattr(i1, "name")
+        let n2 = synIDattr(i2, "name")
+        echo n1 "->" n2
+    endfor
+endfunction
+map gm :call SynStack()<CR>
 
-
-"inoremap <silent> = =<Esc>:call <SID>ealign()<CR>a
-"function! s:ealign()
-  "let p = '^.*=.*$'
-  "if exists(':Tabularize') && getline('.') =~# '^.*[=]' && (getline(line('.')-1) =~# p || getline(line('.')+1) =~# p)
-    "let column = strlen(substitute(getline('.')[0:col('.')],'[^=]','','g'))
-    "let position = strlen(matchstr(getline('.')[0:col('.')],'.*=\s*\zs.*'))
-    "Tabularize/=/l1
-    "normal! 0
-    "call search(repeat('[^=]*=',column).'\s\{-\}'.repeat('.',position),'ce',line('.'))
-  "endif
-"endfunction
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => syntastic
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:syntastic_auto_loc_list=1
-"sudo pip install pyflakes
-"sudo apt-get install tidy
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => FuzzyFinder
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"map <leader>t :FuzzyFinderTextMate<CR>
-"let g:fuf_modesDisable = ['mrucmd',]
-"nnoremap <leader>fb :FufBuffer<CR>
-"nnoremap <leader>fr :FufFile<CR>
-"nnoremap <leader>ff :FufCoverageFile<CR>
-"nnoremap <leader>fd :FufDir<CR>
-"nnoremap <leader>fm :FufMruFile<CR>
-"nnoremap <leader>fh :FufHelp<CR>
-"nnoremap <leader>fl :FufLine<CR>
-
-let g:ctrlp_map = '<leader>ff'
-let g:ctrlp_working_path_mode = "ra"
-let g:ctrlp_match_window_bottom = 0
-let g:ctrlp_extensions = ['dir','line', 'changes', 'mixed', 'bookmarkdir']
-nnoremap <leader>fb :CtrlPBuffer<CR>
-nnoremap <leader>fr :CtrlPRoot<CR>
-nnoremap <leader>ff :CtrlP<CR>
-nnoremap <leader>fd :CtrlPDir<CR>   
-nnoremap <leader>fm :CtrlPMRU<CR>
-"nnoremap <leader>fh :FufHelp<CR>
-nnoremap <leader>fl :CtrlPLine<CR>
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => ScreenShell
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-"let g:ScreenShellGnuScreenVerticalSupport = 'patch'
-
-"nmap <leader>s :ScreenShellVertical<CR>
-"nmap <leader>sp :ScreenShellVertical ipython<CR>
-"nmap <leader>ss :ScreenSend<CR>
-"nmap <leader>sq :ScreenQuit<CR>
-
-"function! s:ScreenShellListener()
-    "if g:ScreenShellActive
-       "map <C-c><C-c> :ScreenSend<cr>
-        "map <C-c><C-x> :ScreenQuit<cr>
-    "else
-        "map <C-c><C-c> :ScreenShell<cr>
-    "endif
-"endfunction
-
-"map <C-c><C-c> :ScreenShell<cr>
-"augroup ScreenShellEnter
-    "autocmd User * call <SID>ScreenShellListener()
-"augroup END
-"augroup ScreenShellExit
-    "autocmd User * call <SID>ScreenShellListener()
-"augroup END
-set novisualbell
-set fileencodings=utf-8,gbk,ucs-bom,cp936
+" }}}
