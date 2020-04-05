@@ -1,6 +1,5 @@
 "
 " Personal preference .vimrc file
-" Maintained by Vincent Driessen <vincent@datafox.nl>
 "
 " My personally preferred version of vim is the one with the "big" feature
 " set, in addition to the following configure options:
@@ -27,14 +26,11 @@ syntax on
 " Change shell
 set shell=bash                  " Vim expects a POSIX-compliant shell, which Fish (my default shell) is not
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editing behaviour
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Change the mapleader from \ to ,
 let mapleader=","
 let maplocalleader="\\"
 
-set autoread
+" Editing behaviour {{{
 set showmode                    " always show what mode we're currently editing in
 set nowrap                      " don't wrap lines
 set tabstop=4                   " a tab is four spaces
@@ -49,9 +45,9 @@ set number                      " always show line numbers
 set showmatch                   " set show matching parenthesis
 set ignorecase                  " ignore case when searching
 set smartcase                   " ignore case if search pattern is all lowercase,
-"    case-sensitive otherwise
+                                "    case-sensitive otherwise
 set smarttab                    " insert tabs on the start of a line according to
-"    shiftwidth, not tabstop
+                                "    shiftwidth, not tabstop
 set scrolloff=4                 " keep 4 lines off the edges of the screen when scrolling
 set virtualedit=all             " allow the cursor to go in to "invalid" places
 set hlsearch                    " highlight search terms
@@ -60,15 +56,15 @@ set gdefault                    " search/replace "globally" (on a line) by defau
 set listchars=tab:▸\ ,trail:·,extends:#,nbsp:·
 
 set nolist                      " don't show invisible characters by default,
-" but it is enabled for some file types (see later)
+                                " but it is enabled for some file types (see later)
 set pastetoggle=<F2>            " when in insert mode, press <F2> to go to
-"    paste mode, where you can paste mass data
-"    that won't be autoindented
+                                "    paste mode, where you can paste mass data
+                                "    that won't be autoindented
 set mouse=a                     " enable using the mouse if terminal emulator
-"    supports it (xterm does)
+                                "    supports it (xterm does)
 set fileformats="unix,dos,mac"
 set formatoptions+=1            " When wrapping paragraphs, don't end lines
-"    with 1-letter words (looks stupid)
+                                "    with 1-letter words (looks stupid)
 
 set nrformats=                  " make <C-a> and <C-x> play well with
                                 "    zero-padded numbers (i.e. don't consider
@@ -94,7 +90,6 @@ nnoremap <leader>N :setlocal number!<cr>
 " See http://stevelosh.com/blog/2010/09/coming-home-to-vim
 nnoremap / /\v
 vnoremap / /\v
-map <C-s> /
 
 " Triggers global-search-and-replace. Prompts for a replacement string and
 " will replace all matches from the previous search command.
@@ -104,15 +99,15 @@ nnoremap <leader>r :let @/='\<<C-R>=expand("<cword>")<CR>\>'<CR>:set hls<CR>:%s/
 " Speed up scrolling of the viewport slightly
 nnoremap <C-e> 2<C-e>
 nnoremap <C-y> 2<C-y>
+" }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Folding rules
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Folding rules {{{
+set foldenable                  " enable folding
 set foldcolumn=2                " add a fold column
 set foldmethod=marker           " detect triple-{ style fold markers
 set foldlevelstart=99           " start out with everything unfolded
 set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
-" which commands trigger auto-unfold
+                                " which commands trigger auto-unfold
 function! MyFoldText()
     let line = getline(v:foldstart)
 
@@ -139,51 +134,47 @@ nnoremap z4 :set foldlevel=4<cr>
 nnoremap z5 :set foldlevel=5<cr>
 " }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Editor layout
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Editor layout {{{
 set termencoding=utf-8
 set encoding=utf-8
 set lazyredraw                  " don't update the display while executing macros
 set laststatus=2                " tell VIM to always put a status line in, even
-"    if there is only one window
+                                "    if there is only one window
 set cmdheight=2                 " use a status bar that is 2 rows high
 " }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vim behaviour
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Vim behaviour {{{
 set hidden                      " hide buffers instead of closing them this
-"    means that the current buffer can be put
-"    to background without being written; and
-"    that marks and undo history are preserved
+                                "    means that the current buffer can be put
+                                "    to background without being written; and
+                                "    that marks and undo history are preserved
 set switchbuf=useopen           " reveal already opened files from the
-" quickfix window instead of opening new
-" buffers
+                                " quickfix window instead of opening new
+                                " buffers
 set history=1000                " remember more commands and search history
 set undolevels=1000             " use many muchos levels of undo
 if v:version >= 730
     set undofile                " keep a persistent backup file
-    set undodir=~/vimrc/vim/undo,~/tmp,/tmp
+    set undodir=~/.vim/.undo,~/tmp,/tmp
 endif
 set nobackup                    " do not keep backup files, it's 70's style cluttering
 set nowritebackup               " do not write out changes via backup files
 set noswapfile                  " do not write annoying intermediate swap files,
-"    who did ever restore from swap files anyway?
-set directory=~/vimrc/vim/tmp,~/tmp,/tmp
-" store swap files in one of these directories
-"    (in case swapfile is ever turned on)
+                                "    who did ever restore from swap files anyway?
+set directory=~/.vim/.tmp,~/tmp,/tmp
+                                " store swap files in one of these directories
+                                "    (in case swapfile is ever turned on)
 set viminfo='20,\"80            " read/write a .viminfo file, don't store more
-"    than 80 lines of registers
+                                "    than 80 lines of registers
 set wildmenu                    " make tab completion for files/buffers act like bash
 set wildmode=list:full          " show a list when pressing tab and complete
-"    first full match
+                                "    first full match
 set wildignore=*.swp,*.bak,*.pyc,*.class
 set title                       " change the terminal's title
 set visualbell                  " don't beep
 set noerrorbells                " don't beep
 set showcmd                     " show (partial) command in the last line of the screen
-"    this also shows visual selection info
+                                "    this also shows visual selection info
 set nomodeline                  " disable mode lines (security measure)
 "set ttyfast                     " always use a fast terminal
 set nocursorline                " don't highlight the current line (useful for quick orientation, but also slow to redraw)
@@ -223,6 +214,7 @@ function! FoldColumnToggle()
         let &l:foldcolumn = g:last_fold_column_width
     endif
 endfunction
+" }}}
 
 " Highlighting {{{
 
@@ -230,18 +222,13 @@ if (has("termguicolors"))
    set termguicolors
 endif
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" =>highlight
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if &t_Co > 2 || has("gui_running")
-    syntax on                    " switch syntax highlighting on, when the terminal has colors
+   syntax on                    " switch syntax highlighting on, when the terminal has colors
 endif
 
 " }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Shortcut mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Shortcut mappings {{{
 " Since I never use the ; key anyway, this is a real optimization for almost
 " all Vim commands, as I don't have to press the Shift key to form chords to
 " enter ex mode.
@@ -288,26 +275,6 @@ nnoremap ` '
 nnoremap j gj
 nnoremap k gk
 
-" Fast saving
-nmap <leader>w :w!<cr>
-
-func! MySys()
-    return 'linux'
-endfunc
-
-if MySys() == "windows"
-    " Fast editing of the .vimrc
-    map <leader>e :e! ~/vimrc/vimrc<cr>
-
-    " When vimrc is edited, reload it
-    autocmd! bufwritepost vimrc source ~/vimrc/vimrc
-else
-    " Fast editing of the .vimrc
-    map <leader>e :e! ~/vimrc/vimrc<cr>
-
-    " When vimrc is edited, reload it
-    autocmd! bufwritepost vimrc source ~/vimrc/vimrc
-endif
 " Easy window navigation
 noremap <C-h> <C-w>h
 noremap <C-j> <C-w>j
@@ -402,7 +369,7 @@ nnoremap K *N:grep! "\b<c-r><c-w>\b"<cr>:cw<cr>
 nnoremap <leader>g :spellgood <c-r><c-w>
 
 " Define "Ag" command
-command -nargs=+ -complete=file -bar Ag silent! grep! <args> | cwindow | redraw!
+" command -nargs=+ -complete=file -bar Ag silent! grep! <args> | cwindow | redraw!
 
 " bind \ (backward slash) to grep shortcut
 nnoremap \ :Ag<SPACE>
@@ -430,7 +397,7 @@ let NERDTreeShowFiles=1
 let NERDTreeShowHidden=1
 
 " Quit on opening files from the tree
-let NERDTreeQuitOnOpen=1
+let NERDTreeQuitOnOpen=0
 
 " Highlight the selected entry in the tree
 let NERDTreeHighlightCursorline=1
@@ -444,6 +411,26 @@ let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.py\$class$', '\.obj$',
             \ '\.o$', '\.so$', '\.egg$', '^\.git$', '__pycache__', '\.DS_Store' ]
 
 " }}}
+"
+"
+"
+"https://github.com/python-mode/python-mode/issues/897#issuecomment-424646475
+let g:pymode_python = 'python3'
+let g:pymode_rope = 0
+
+" YouCompleteMe and UltiSnips compatibility, with the helper of supertab
+" (via http://stackoverflow.com/a/22253548/1626737)
+
+let g:SuperTabDefaultCompletionType    = '<C-n>'
+let g:SuperTabCrMapping                = 0
+let g:UltiSnipsExpandTrigger           = '<tab>'
+let g:UltiSnipsJumpForwardTrigger      = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger     = '<s-tab>'
+let g:ycm_key_list_select_completion   = ['<C-j>', '<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-k>', '<C-p>', '<Up>']
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
 
 " vim-sort-imports config (import-sort fixer) {{{
 
@@ -451,8 +438,7 @@ let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.py\$class$', '\.obj$',
 " of the vim-sort-imports plugin.
 let g:import_sort_auto = 0
 
-" Tell Neosnippet about the other snippets
-let g:neosnippet#snippets_directory='~/.vim/bundle/vim-snippets/snippets'
+" }}}
 
 " vim-flake8 default configuration
 let g:flake8_show_in_gutter=0
@@ -465,18 +451,7 @@ match ErrorMsg '\v^[<\|=|>]{7}([^=].+)?$'
 nnoremap <silent> <leader>c /\v^[<\|=>]{7}([^=].+)?$<CR>
 " }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => trinity settings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"nmap <leader>n :TrinityToggleAll<CR>
-"nmap <leader>nl :TrinityToggleNERDTree<CR>
-"nmap <leader>nr :TrinityToggleTagList<CR>
-"nmap <leader>nd :TrinityToggleSourceExplorer<CR>
-nmap <leader>nn :NERDTreeToggle<CR>
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Filetype specific handling
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Filetype specific handling {{{
 " only do this part when compiled with support for autocommands
 if has("autocmd")
     augroup invisible_chars "{{{
@@ -543,7 +518,6 @@ if has("autocmd")
             set ft=python
         endfun
         autocmd BufNewFile,BufRead *.py call s:DetectPythonVariant()
-        autocmd filetype python let $WORKON_HOME=fnamemodify("~/workon",":p")
 
         " PEP8 compliance (set 1 tab = 4 chars explicitly, even if set
         " earlier, as it is important)
@@ -666,17 +640,14 @@ autocmd BufReadPost *
     \ endif
 " }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Common abbreviations / misspellings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-source ~/vimrc/vim/autocorrect.vim
+" Common abbreviations / misspellings {{{
+source ~/.vim/autocorrect.vim
+" }}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Extra vi-compatibility
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Extra vi-compatibility {{{
 " set extra vi-compatible options
 set cpoptions+=$     " when changing a line, don't redisplay, but put a '$' at
-" the end during the change
+                     " the end during the change
 set formatoptions-=o " don't start new lines w/ comment leader on pressing 'o'
 au filetype vim set formatoptions-=o
                      " somehow, during vim filetype detection, this gets set
@@ -706,7 +677,7 @@ vnoremap ' :s/'/’/<cr>
 "set guifont=Mensch\ for\ Powerline:h14 linespace=0
 "set guifont=saxMono:h14 linespace=3
 "set guifont=Ubuntu\ Mono:h18 linespace=3
-set guifont=Source\ Code\ Pro\ Light:h10 linespace=0
+set guifont=Source\ Code\ Pro\ for\ Powerline:h10 linespace=0
 
 if has("gui_running")
     " Remove toolbar, left scrollbar and right scrollbar
@@ -715,12 +686,12 @@ if has("gui_running")
     set guioptions-=L
     set guioptions-=r
     set guioptions-=R
-    set guifont=Source\ Code\ Pro\ Light:h13 linespace=0
+    set guifont=Source\ Code\ Pro\ for\ Powerline:h13 linespace=0
 else
     set bg=dark
 endif
 
-colorscheme OceanicNext
+colorscheme molokai
 
 " Pulse ------------------------------------------------------------------- {{{
 
@@ -963,9 +934,9 @@ let g:ale_fixers = {
 " {{{ Check JS with Flow (vim-lsc)
 
 " inoremap <expr> <tab> pumvisible() ? "\<c-n>" : "\<tab>"
-inoremap <tab> <c-n>
-inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
-inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<cr>"
+" inoremap <tab> <c-n>
+" inoremap <expr> <s-tab> pumvisible() ? "\<c-p>" : "\<s-tab>"
+" inoremap <expr> <cr> pumvisible() ? "\<c-y>" : "\<cr>"
 
 let g:lsc_server_commands = {
    \ 'javascript': 'flow lsp',
@@ -1009,9 +980,6 @@ let b:vcm_tab_complete = "omni"
 "   \}
 
 " }}}
-
-" Elm!
-let g:elm_format_autosave = 1
 
 " Switch.vim! {{{
 

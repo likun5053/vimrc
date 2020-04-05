@@ -13,9 +13,6 @@
 [submodule "vim/pack/start/vim-nginx"]
 	path = vim/pack/start/vim-nginx
 	url = https://github.com/tsl0922/vim-nginx
-[submodule "vim/pack/start/vim-fish"]
-	path = vim/pack/start/vim-fish
-	url = https://github.com/dag/vim-fish
 [submodule "vim/pack/start/fzf.vim"]
 	path = vim/pack/start/fzf.vim
 	url = https://github.com/junegunn/fzf.vim
@@ -37,18 +34,12 @@
 [submodule "vim/pack/start/vim-sort-imports"]
 	path = vim/pack/start/vim-sort-imports
 	url = https://github.com/ruanyl/vim-sort-imports
-[submodule "vim/pack/start/pegjs-vim"]
-	path = vim/pack/start/pegjs-vim
-	url = https://github.com/alunny/pegjs-vim
 [submodule "vim/pack/start/vim-graphql"]
 	path = vim/pack/start/vim-graphql
 	url = https://github.com/jparise/vim-graphql
 [submodule "vim/pack/start/typescript-vim"]
 	path = vim/pack/start/typescript-vim
 	url = https://github.com/leafgarland/typescript-vim
-[submodule "vim/pack/start/elm-vim"]
-	path = vim/pack/start/elm-vim
-	url = https://github.com/ElmCast/elm-vim
 [submodule "vim/pack/start/switch.vim"]
 	path = vim/pack/start/switch.vim
 	url = https://github.com/AndrewRadev/switch.vim
@@ -127,3 +118,15 @@
 [submodule "vim/pack/start/python-mode"]
 	path = vim/pack/start/python-mode
 	url = https://github.com/nvie/python-mode
+[submodule "vim/pack/start/Auto-Pairs"]
+	path = vim/pack/start/Auto-Pairs
+	url = https://github.com/vim-scripts/Auto-Pairs.git
+[submodule "vim/pack/start/ultisnips"]
+	path = vim/pack/start/ultisnips
+	url = https://github.com/SirVer/ultisnips.git
+[submodule "vim/pack/start/vim-snippets"]
+	path = vim/pack/start/vim-snippets
+	url = https://github.com/honza/vim-snippets.git
+[submodule "vim/pack/start/supertab"]
+	path = vim/pack/start/supertab
+	url = https://github.com/ervandew/supertab.git
